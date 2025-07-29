@@ -1,0 +1,43 @@
+{
+  "name": "craigs-budget-tool",
+  "version": "1.0.0",
+  "description": "A comprehensive financial planning and budgeting tool designed for career transition planning and financial independence tracking",
+  "main": "index.html",
+  "scripts": {
+    "start": "open index.html",
+    "dev": "python -m http.server 8000",
+    "serve": "npx http-server -p 8000 -o"
+  },
+  "keywords": [
+    "budget",
+    "financial-planning",
+    "career-transition",
+    "financial-independence",
+    "retirement-planning",
+    "investment-tracking",
+    "net-worth",
+    "savings-calculator"
+  ],
+  "author": "Craig",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/craig/budget-tool"
+  },
+  "bugs": {
+    "url": "https://github.com/craig/budget-tool/issues"
+  },
+  "homepage": "https://github.com/craig/budget-tool#readme",
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  },
+  "dependencies": {},
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ]
+} 

@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Craig's Budget Tool - Financial Planning Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1><i class="fas fa-chart-line"></i> Craig's Budget Tool</h1>
+                <p class="subtitle">Financial Planning & Transition Dashboard</p>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Overview Cards -->
+            <section class="overview-section">
+                <div class="card overview-card">
+                    <h3><i class="fas fa-wallet"></i> Net Worth</h3>
+                    <div class="amount" id="netWorth">$1,020,000</div>
+                    <div class="change positive">+$45,000 this year</div>
+                </div>
+                <div class="card overview-card">
+                    <h3><i class="fas fa-home"></i> Home Equity</h3>
+                    <div class="amount" id="homeEquity">$580,000</div>
+                    <div class="change positive">$800K value - $220K mortgage</div>
+                </div>
+                <div class="card overview-card">
+                    <h3><i class="fas fa-piggy-bank"></i> Investment Portfolio</h3>
+                    <div class="amount" id="investments">$1,020,000</div>
+                    <div class="change positive">IRA: $450K | Brokerage: $220K | 401K: $350K</div>
+                </div>
+                <div class="card overview-card">
+                    <h3><i class="fas fa-car"></i> Vehicle Assets</h3>
+                    <div class="amount" id="vehicles">$29,000</div>
+                    <div class="change neutral">X3: $19K | Vanagon: $10K</div>
+                </div>
+            </section>
+
+            <!-- Budget Planning Section -->
+            <section class="budget-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-calculator"></i> Monthly Budget Planning</h2>
+                    <button class="btn btn-primary" id="addExpenseBtn">
+                        <i class="fas fa-plus"></i> Add Expense
+                    </button>
+                </div>
+
+                <div class="budget-grid">
+                    <!-- Income Sources -->
+                    <div class="card budget-card">
+                        <h3><i class="fas fa-money-bill-wave"></i> Income Sources</h3>
+                        <div class="budget-item">
+                            <span>Current Salary (FRT)</span>
+                            <input type="number" id="currentSalary" value="0" placeholder="Enter salary">
+                        </div>
+                        <div class="budget-item">
+                            <span>Investment Income</span>
+                            <input type="number" id="investmentIncome" value="0" placeholder="Monthly dividends">
+                        </div>
+                        <div class="budget-item">
+                            <span>Other Income</span>
+                            <input type="number" id="otherIncome" value="0" placeholder="Side hustles, etc.">
+                        </div>
+                        <div class="budget-total">
+                            <strong>Total Monthly Income:</strong>
+                            <span id="totalIncome">$0</span>
+                        </div>
+                    </div>
+
+                    <!-- Fixed Expenses -->
+                    <div class="card budget-card">
+                        <h3><i class="fas fa-anchor"></i> Fixed Expenses</h3>
+                        <div class="budget-item">
+                            <span>Mortgage Payment</span>
+                            <input type="number" id="mortgagePayment" value="0" placeholder="Monthly payment">
+                        </div>
+                        <div class="budget-item">
+                            <span>Property Tax</span>
+                            <input type="number" id="propertyTax" value="0" placeholder="Monthly average">
+                        </div>
+                        <div class="budget-item">
+                            <span>Home Insurance</span>
+                            <input type="number" id="homeInsurance" value="0" placeholder="Monthly premium">
+                        </div>
+                        <div class="budget-item">
+                            <span>Electricity</span>
+                            <input type="number" id="electricity" value="250" placeholder="Monthly average">
+                        </div>
+                        <div class="budget-item">
+                            <span>Internet</span>
+                            <input type="number" id="internet" value="79" placeholder="Monthly bill">
+                        </div>
+                        <div class="budget-item">
+                            <span>Cell Phone</span>
+                            <input type="number" id="cellPhone" value="80" placeholder="Monthly bill">
+                        </div>
+                        <div class="budget-item">
+                            <span>Van Parking</span>
+                            <input type="number" id="vanParking" value="140" placeholder="Monthly fee">
+                        </div>
+                        <div class="budget-total">
+                            <strong>Total Fixed Expenses:</strong>
+                            <span id="totalFixedExpenses">$0</span>
+                        </div>
+                    </div>
+
+                    <!-- Variable Expenses -->
+                    <div class="card budget-card">
+                        <h3><i class="fas fa-chart-bar"></i> Variable Expenses</h3>
+                        <div class="budget-item">
+                            <span>Groceries</span>
+                            <input type="number" id="groceries" value="0" placeholder="Monthly budget">
+                        </div>
+                        <div class="budget-item">
+                            <span>Dining Out</span>
+                            <input type="number" id="diningOut" value="0" placeholder="Monthly budget">
+                        </div>
+                        <div class="budget-item">
+                            <span>Gas & Transportation</span>
+                            <input type="number" id="transportation" value="0" placeholder="Monthly budget">
+                        </div>
+                        <div class="budget-item">
+                            <span>Entertainment</span>
+                            <input type="number" id="entertainment" value="0" placeholder="Monthly budget">
+                        </div>
+                        <div class="budget-item">
+                            <span>Healthcare</span>
+                            <input type="number" id="healthcare" value="0" placeholder="Monthly budget">
+                        </div>
+                        <div class="budget-item">
+                            <span>Credit Card Payments</span>
+                            <input type="number" id="creditCardPayments" value="0" placeholder="Monthly payments">
+                        </div>
+                        <div class="budget-total">
+                            <strong>Total Variable Expenses:</strong>
+                            <span id="totalVariableExpenses">$0</span>
+                        </div>
+                    </div>
+
+                    <!-- Savings & Investments -->
+                    <div class="card budget-card">
+                        <h3><i class="fas fa-piggy-bank"></i> Savings & Investments</h3>
+                        <div class="budget-item">
+                            <span>401K Contribution</span>
+                            <input type="number" id="retirement401k" value="0" placeholder="Monthly contribution">
+                        </div>
+                        <div class="budget-item">
+                            <span>IRA Contribution</span>
+                            <input type="number" id="iraContribution" value="0" placeholder="Monthly contribution">
+                        </div>
+                        <div class="budget-item">
+                            <span>Emergency Fund</span>
+                            <input type="number" id="emergencyFund" value="0" placeholder="Monthly contribution">
+                        </div>
+                        <div class="budget-item">
+                            <span>Brokerage Investment</span>
+                            <input type="number" id="brokerageInvestment" value="0" placeholder="Monthly contribution">
+                        </div>
+                        <div class="budget-total">
+                            <strong>Total Savings:</strong>
+                            <span id="totalSavings">$0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Budget Summary -->
+                <div class="budget-summary">
+                    <div class="card summary-card">
+                        <h3><i class="fas fa-chart-pie"></i> Budget Summary</h3>
+                        <div class="summary-grid">
+                            <div class="summary-item">
+                                <span>Total Income:</span>
+                                <span id="summaryIncome">$0</span>
+                            </div>
+                            <div class="summary-item">
+                                <span>Total Expenses:</span>
+                                <span id="summaryExpenses">$0</span>
+                            </div>
+                            <div class="summary-item">
+                                <span>Total Savings:</span>
+                                <span id="summarySavings">$0</span>
+                            </div>
+                            <div class="summary-item highlight">
+                                <span>Net Cash Flow:</span>
+                                <span id="netCashFlow">$0</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Charts Section -->
+            <section class="charts-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-chart-area"></i> Financial Analytics</h2>
+                </div>
+                
+                <div class="charts-grid">
+                    <div class="card chart-card">
+                        <h3>Expense Breakdown</h3>
+                        <canvas id="expenseChart"></canvas>
+                    </div>
+                    <div class="card chart-card">
+                        <h3>Income vs Expenses</h3>
+                        <canvas id="incomeExpenseChart"></canvas>
+                    </div>
+                    <div class="card chart-card">
+                        <h3>Net Worth Projection</h3>
+                        <canvas id="netWorthChart"></canvas>
+                    </div>
+                    <div class="card chart-card">
+                        <h3>Savings Rate</h3>
+                        <canvas id="savingsChart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Career Transition Planning -->
+            <section class="transition-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-exchange-alt"></i> Career Transition Planning</h2>
+                </div>
+                
+                <div class="transition-grid">
+                    <div class="card transition-card">
+                        <h3><i class="fas fa-calendar-alt"></i> Timeline Planning</h3>
+                        <div class="timeline-item">
+                            <label>Target Resignation Date:</label>
+                            <input type="date" id="resignationDate">
+                        </div>
+                        <div class="timeline-item">
+                            <label>Emergency Fund Target:</label>
+                            <input type="number" id="emergencyFundTarget" value="50000" placeholder="6-12 months expenses">
+                        </div>
+                        <div class="timeline-item">
+                            <label>Monthly Savings Goal:</label>
+                            <input type="number" id="monthlySavingsGoal" value="0" placeholder="Monthly savings target">
+                        </div>
+                    </div>
+
+                    <div class="card transition-card">
+                        <h3><i class="fas fa-calculator"></i> Financial Independence Calculator</h3>
+                        <div class="fi-item">
+                            <label>Current Annual Expenses:</label>
+                            <span id="annualExpenses">$0</span>
+                        </div>
+                        <div class="fi-item">
+                            <label>4% Rule Target:</label>
+                            <span id="fiTarget">$0</span>
+                        </div>
+                        <div class="fi-item">
+                            <label>Current Portfolio:</label>
+                            <span id="currentPortfolio">$1,020,000</span>
+                        </div>
+                        <div class="fi-item highlight">
+                            <label>Years to FI:</label>
+                            <span id="yearsToFI">Calculating...</span>
+                        </div>
+                    </div>
+
+                    <div class="card transition-card">
+                        <h3><i class="fas fa-lightbulb"></i> Action Items</h3>
+                        <div class="action-list">
+                            <div class="action-item">
+                                <input type="checkbox" id="action1">
+                                <label for="action1">Build 6-month emergency fund</label>
+                            </div>
+                            <div class="action-item">
+                                <input type="checkbox" id="action2">
+                                <label for="action2">Pay off high-interest credit cards</label>
+                            </div>
+                            <div class="action-item">
+                                <input type="checkbox" id="action3">
+                                <label for="action3">Maximize 401K contributions</label>
+                            </div>
+                            <div class="action-item">
+                                <input type="checkbox" id="action4">
+                                <label for="action4">Update resume and LinkedIn</label>
+                            </div>
+                            <div class="action-item">
+                                <input type="checkbox" id="action5">
+                                <label for="action5">Network and research new opportunities</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Add Expense Modal -->
+        <div id="expenseModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>Add Custom Expense</h2>
+                <form id="expenseForm">
+                    <div class="form-group">
+                        <label for="expenseName">Expense Name:</label>
+                        <input type="text" id="expenseName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="expenseAmount">Amount:</label>
+                        <input type="number" id="expenseAmount" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="expenseCategory">Category:</label>
+                        <select id="expenseCategory">
+                            <option value="fixed">Fixed Expense</option>
+                            <option value="variable">Variable Expense</option>
+                            <option value="savings">Savings</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Add Expense</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
