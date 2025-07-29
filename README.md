@@ -1,163 +1,128 @@
 # Craig's Budget Tool - Financial Planning Dashboard
 
-A comprehensive, modern budgeting and financial planning tool designed specifically for career transition planning and financial independence tracking.
+A comprehensive financial planning and budget management tool designed for job transitions and wealth management. Built with HTML, CSS, and JavaScript, featuring real-time calculations, portfolio tracking, and professional reporting capabilities.
 
-## 🚀 Features
+## 🎯 Features
 
-### 📊 Financial Overview
-- **Net Worth Tracking**: Real-time calculation of total assets ($1.02M+ portfolio)
-- **Asset Breakdown**: Home equity, investment portfolio, vehicle assets
-- **Portfolio Allocation**: IRA ($450K), Brokerage ($220K), 401K ($350K), Real Estate ($580K)
+### **Financial Overview**
+- **Net Worth Tracking**: Real-time calculation of total assets
+- **Portfolio Management**: Track investments across multiple accounts
+- **Home Equity Calculator**: Dynamic mortgage and property value tracking
+- **Vehicle Assets**: Monitor vehicle values
 
-### 💰 Budget Planning
-- **Income Sources**: Salary, investment income, side hustles
-- **Fixed Expenses**: Mortgage, property tax, utilities, insurance, subscriptions
-- **Variable Expenses**: Groceries, dining, transportation, entertainment, healthcare
-- **Savings & Investments**: 401K, IRA, emergency fund, brokerage contributions
+### **Budget Planning**
+- **Income Sources**: Salary, investment income, commissions
+- **Fixed Expenses**: Mortgage, utilities, subscriptions, insurance
+- **Variable Expenses**: Groceries, dining, transportation, entertainment
+- **Savings & Investments**: 401K, IRA, emergency fund, brokerage
 
-### 📈 Financial Analytics
-- **Interactive Charts**: Expense breakdown, income vs expenses, net worth projection
-- **Real-time Calculations**: Automatic updates as you modify values
-- **Visual Insights**: Doughnut charts, bar charts, line charts, radar charts
+### **Advanced Features**
+- **Real-time Calculations**: All values update instantly
+- **Portfolio Consolidation**: Track accounts across Goldman Sachs, Fidelity, Schwab
+- **Financial Independence Calculator**: 4% rule analysis for job transitions
+- **Export Reports**: Professional PDF-ready reports for financial meetings
+- **Interactive Charts**: Visual representation of budget and portfolio data
 
-### 🎯 Career Transition Planning
-- **Timeline Planning**: Target resignation dates and emergency fund goals
-- **Financial Independence Calculator**: 4% rule calculations and years to FI
-- **Action Items**: Checklist for career transition preparation
+### **Job Transition Planning**
+- **Expense Analysis**: Post-job loss financial planning
+- **Portfolio Gap Analysis**: Calculate required vs. current investments
+- **FI Timeline**: Years to financial independence
+- **Monthly Portfolio Income**: 4% rule income projections
 
-### 🛠️ Advanced Features
-- **Custom Expenses**: Add unlimited custom expense categories
-- **Data Export**: Export budget data as JSON
-- **Keyboard Shortcuts**: Ctrl+S (save), Ctrl+R (reset)
-- **Responsive Design**: Works on desktop, tablet, and mobile
-- **Modern UI**: Glassmorphism design with smooth animations
+## 🚀 Quick Start
 
-## 🎨 Design Highlights
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/yourusername/craigs-budget-tool.git
+   cd craigs-budget-tool
+   ```
 
-- **Modern Glassmorphism**: Translucent cards with backdrop blur effects
-- **Gradient Backgrounds**: Beautiful purple-blue gradients
-- **Smooth Animations**: Hover effects and transitions
-- **Responsive Layout**: Adapts to any screen size
-- **Professional Typography**: Inter font family for clean readability
+2. **Open in browser**:
+   - Simply open `index.html` in any modern web browser
+   - Or serve locally: `python -m http.server 8000`
 
-## 📱 Responsive Design
+3. **Start planning**:
+   - Update your financial data in the input fields
+   - Watch real-time calculations update
+   - Export reports for financial meetings
 
-The tool is fully responsive and works seamlessly on:
-- Desktop computers
-- Tablets
-- Mobile phones
-- All modern browsers
+## 📊 Key Sections
 
-## 🚀 Getting Started
+### **Overview Cards**
+- Net Worth: $1,789,152
+- Home Equity: $554,358
+- Investment Portfolio: $1,205,794
+- Vehicle Assets: $29,000
 
-1. **Open the Application**: Simply open `index.html` in your web browser
-2. **Enter Your Data**: Update the default values with your actual financial information
-3. **Customize Budget**: Add custom expenses using the "Add Expense" button
-4. **Track Progress**: Monitor your financial independence journey
-5. **Export Data**: Use the export function to save your budget data
+### **Portfolio Tracking**
+- 401K (Fidelity): $350,000
+- IRA (Goldman): $510,172
+- Brokerage (Goldman): $308,103
+- Roth IRA (Schwab): $6,000
+- Brokerage (Schwab): $23,000
+- Crypto (Coinbase): $16,000
 
-## 💡 Usage Tips
+### **Monthly Budget**
+- Income: $10,833 (salary)
+- Fixed Expenses: $3,226
+- Variable Expenses: Customizable
+- Savings: 401K (8%) + IRA + Additional
 
-### Budget Planning
-- Start with your current salary and investment income
-- Enter all fixed expenses (mortgage, utilities, insurance)
-- Add variable expenses based on your spending patterns
-- Set realistic savings goals for retirement and emergency funds
+## 🎨 Design Features
 
-### Career Transition
-- Set a target resignation date
-- Build a 6-12 month emergency fund
-- Maximize retirement contributions before leaving
-- Track your progress toward financial independence
+- **Modern Dark Theme**: Professional glass morphism design
+- **Responsive Layout**: Works on desktop, tablet, and mobile
+- **Smooth Animations**: Value changes with visual feedback
+- **Interactive Elements**: Hover effects and transitions
+- **Print-Ready Reports**: Professional formatting for meetings
 
-### Financial Independence
-- The tool calculates your FI number using the 4% rule
-- Monitor your years to financial independence
-- Adjust savings rates to accelerate your timeline
+## 📈 Financial Planning Tools
 
-## 🔧 Technical Features
+### **Export Report Feature**
+- Comprehensive financial summary
+- Portfolio breakdown with consolidation notes
+- Budget analysis and cash flow
+- Financial independence calculations
+- Meeting notes for Goldman Sachs consultations
 
-### Built With
-- **HTML5**: Semantic markup and modern structure
-- **CSS3**: Advanced styling with flexbox, grid, and animations
-- **JavaScript ES6+**: Modern JavaScript with classes and modules
-- **Chart.js**: Interactive data visualization
-- **Font Awesome**: Professional icons
-- **Google Fonts**: Inter font family
+### **Real-time Updates**
+- Portfolio values update automatically
+- Net worth recalculates instantly
+- Charts refresh with new data
+- FI timeline adjusts based on changes
 
-### Browser Support
-- Chrome (recommended)
-- Firefox
-- Safari
-- Edge
+## 🛠️ Technical Stack
 
-## 📊 Default Profile
+- **Frontend**: HTML5, CSS3, JavaScript (ES6+)
+- **Charts**: Chart.js for data visualization
+- **Styling**: Custom CSS with glass morphism effects
+- **Icons**: Font Awesome
+- **Fonts**: Inter (Google Fonts)
 
-The tool is pre-configured with Craig's financial profile:
-- **Age**: 48, Single, No kids
-- **Home**: $800K value, $220K mortgage
-- **Investments**: $1.02M total portfolio
-- **Vehicles**: 2019 X3 ($19K), 1985 Vanagon ($10K)
-- **Monthly Expenses**: Electricity ($200-300), Internet ($79), Cell ($80), Van parking ($140)
+## 📝 Usage
 
-## 🎯 Career Transition Focus
+1. **Update Financial Data**: Enter your current values in the input fields
+2. **Track Portfolio**: Update account values daily for accurate tracking
+3. **Plan Budget**: Adjust expenses and income as needed
+4. **Export Reports**: Generate professional reports for financial meetings
+5. **Monitor Progress**: Watch your net worth and FI timeline evolve
 
-This tool is specifically designed for someone planning a career transition:
-- **Emergency Fund Planning**: Calculate 6-12 months of expenses
-- **Investment Strategy**: Maximize retirement contributions
-- **Timeline Planning**: Set realistic resignation dates
-- **Financial Independence**: Track progress toward FI
+## 🎯 Perfect For
 
-## 📈 Charts & Analytics
+- **Job Transitions**: Plan finances during career changes
+- **Wealth Management**: Track portfolio across multiple institutions
+- **Financial Planning**: Comprehensive budget and investment analysis
+- **Meeting Preparation**: Professional reports for financial advisors
+- **Personal Finance**: Daily tracking and long-term planning
 
-### Expense Breakdown Chart
-- Visual representation of fixed vs variable expenses vs savings
-- Interactive doughnut chart with hover effects
+## 📄 License
 
-### Income vs Expenses Chart
-- Bar chart comparing monthly income, expenses, and savings
-- Real-time updates as you modify values
+This project is open source and available under the MIT License.
 
-### Net Worth Projection
-- 5-year projection of net worth growth
-- Assumes 7% annual investment returns
+## 🤝 Contributing
 
-### Portfolio Allocation
-- Radar chart showing current asset allocation
-- Helps identify diversification opportunities
-
-## 🔐 Data Privacy
-
-- All data is stored locally in your browser
-- No data is sent to external servers
-- Export your data anytime for backup
-- Your financial information stays private
-
-## 🚀 Future Enhancements
-
-Potential features for future versions:
-- **Data Import**: Import from bank statements
-- **Goal Tracking**: Set and track financial goals
-- **Investment Tracking**: Real-time portfolio updates
-- **Tax Planning**: Tax optimization strategies
-- **Scenario Planning**: "What-if" analysis tools
-
-## 📞 Support
-
-For questions or suggestions about the budget tool:
-- Review the code comments for technical details
-- Check browser console for any error messages
-- Ensure all required files are in the same directory
-
-## 🎉 Success Metrics
-
-Track your progress with these key metrics:
-- **Savings Rate**: Percentage of income saved
-- **Emergency Fund**: Months of expenses covered
-- **Years to FI**: Time to financial independence
-- **Net Worth Growth**: Annual portfolio growth
-- **Debt-to-Income Ratio**: Monthly debt payments vs income
+Feel free to submit issues and enhancement requests!
 
 ---
 
-**Built with ❤️ for financial planning and career transitions** 
+**Built with ❤️ for comprehensive financial planning and wealth management** 
