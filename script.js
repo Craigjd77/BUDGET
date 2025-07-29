@@ -4,8 +4,11 @@ class BudgetTool {
         this.initializeElements();
         this.setupEventListeners();
         this.loadDefaultValues();
+        this.updateOverviewCards();
+        this.updatePortfolioTotal(); // Initialize portfolio total
         this.calculateBudget();
         this.initializeCharts();
+        this.updateCharts(); // Update charts with initial data
         this.calculateFinancialIndependence();
     }
 
@@ -20,7 +23,13 @@ class BudgetTool {
         this.currentSalaryInput = document.getElementById('currentSalary');
         this.investmentIncomeInput = document.getElementById('investmentIncome');
         this.otherIncomeInput = document.getElementById('otherIncome');
+        this.commissionsInput = document.getElementById('commissions');
         this.totalIncomeElement = document.getElementById('totalIncome');
+
+        // Home equity elements
+        this.homeValueInput = document.getElementById('homeValue');
+        this.mortgagePrincipalInput = document.getElementById('mortgagePrincipal');
+        this.calculatedHomeEquityElement = document.getElementById('calculatedHomeEquity');
 
         // Fixed expenses elements
         this.mortgagePaymentInput = document.getElementById('mortgagePayment');
@@ -30,6 +39,8 @@ class BudgetTool {
         this.internetInput = document.getElementById('internet');
         this.cellPhoneInput = document.getElementById('cellPhone');
         this.vanParkingInput = document.getElementById('vanParking');
+        this.youtubePremiumInput = document.getElementById('youtubePremium');
+        this.siriusXmInput = document.getElementById('siriusXm');
         this.totalFixedExpensesElement = document.getElementById('totalFixedExpenses');
 
         // Variable expenses elements
@@ -56,33 +67,51 @@ class BudgetTool {
 
         // FI Calculator elements
         this.annualExpensesElement = document.getElementById('annualExpenses');
+        this.annualExpensesDisplay = document.getElementById('annualExpensesDisplay');
         this.fiTargetElement = document.getElementById('fiTarget');
         this.currentPortfolioElement = document.getElementById('currentPortfolio');
+        this.portfolioGapElement = document.getElementById('portfolioGap');
         this.yearsToFIElement = document.getElementById('yearsToFI');
+        this.monthlyPortfolioIncomeElement = document.getElementById('monthlyPortfolioIncome');
 
         // Modal elements
         this.modal = document.getElementById('expenseModal');
         this.addExpenseBtn = document.getElementById('addExpenseBtn');
         this.closeBtn = document.querySelector('.close');
         this.expenseForm = document.getElementById('expenseForm');
+        this.exportReportBtn = document.getElementById('exportReportBtn');
 
         // Charts
         this.expenseChart = null;
         this.incomeExpenseChart = null;
         this.netWorthChart = null;
         this.savingsChart = null;
+
+        // Portfolio elements
+        this.fidelity401kInput = document.getElementById('fidelity401k');
+        this.goldmanIraInput = document.getElementById('goldmanIra');
+        this.goldmanBrokerageInput = document.getElementById('goldmanBrokerage');
+        this.schwabRothInput = document.getElementById('schwabRoth');
+        this.schwabBrokerageInput = document.getElementById('schwabBrokerage');
+        this.cryptoCoinbaseInput = document.getElementById('cryptoCoinbase');
     }
 
     setupEventListeners() {
         // Budget calculation listeners
         const budgetInputs = [
-            this.currentSalaryInput, this.investmentIncomeInput, this.otherIncomeInput,
+            this.currentSalaryInput, this.investmentIncomeInput, this.otherIncomeInput, this.commissionsInput,
             this.mortgagePaymentInput, this.propertyTaxInput, this.homeInsuranceInput,
             this.electricityInput, this.internetInput, this.cellPhoneInput, this.vanParkingInput,
+            this.youtubePremiumInput, this.siriusXmInput,
             this.groceriesInput, this.diningOutInput, this.transportationInput,
             this.entertainmentInput, this.healthcareInput, this.creditCardPaymentsInput,
             this.retirement401kInput, this.iraContributionInput, this.emergencyFundInput,
-            this.brokerageInvestmentInput
+            this.brokerageInvestmentInput, this.homeValueInput, this.mortgagePrincipalInput
+        ];
+
+        const portfolioInputs = [
+            this.fidelity401kInput, this.goldmanIraInput, this.goldmanBrokerageInput,
+            this.schwabRothInput, this.schwabBrokerageInput, this.cryptoCoinbaseInput
         ];
 
         budgetInputs.forEach(input => {
@@ -93,10 +122,26 @@ class BudgetTool {
             });
         });
 
+        portfolioInputs.forEach(input => {
+            input.addEventListener('input', () => {
+                this.updatePortfolioTotal();
+                this.updateCharts();
+                this.calculateFinancialIndependence();
+            });
+        });
+
         // Modal listeners
         this.addExpenseBtn.addEventListener('click', () => this.openModal());
         this.closeBtn.addEventListener('click', () => this.closeModal());
         this.expenseForm.addEventListener('submit', (e) => this.handleExpenseSubmit(e));
+        this.exportReportBtn.addEventListener('click', () => this.exportReport());
+        
+        // Close modal when clicking outside
+        window.addEventListener('click', (e) => {
+            if (e.target === this.modal) {
+                this.closeModal();
+            }
+        });
 
         // Close modal when clicking outside
         window.addEventListener('click', (e) => {
@@ -113,25 +158,39 @@ class BudgetTool {
     }
 
     loadDefaultValues() {
-        // Set default values based on Craig's profile
-        this.currentSalaryInput.value = 120000; // Assuming $120K salary
-        this.investmentIncomeInput.value = 2500; // Monthly dividends from $1M+ portfolio
-        this.mortgagePaymentInput.value = 1500; // Estimated monthly payment
-        this.propertyTaxInput.value = 800; // Monthly average
+        // Set default values based on Craig's current profile from screenshot
+        this.currentSalaryInput.value = 10833; // Monthly salary - $130,000 annual / 12 months
+        this.investmentIncomeInput.value = 0; // No investment income currently
+        this.otherIncomeInput.value = 0; // No other income sources
+        this.commissionsInput.value = 0; // No commission income currently
+        this.mortgagePaymentInput.value = 2650; // Monthly payment (includes property tax)
+        this.propertyTaxInput.value = 0; // Property tax included in mortgage payment
         this.homeInsuranceInput.value = 150; // Monthly premium
+        this.electricityInput.value = 250; // Monthly average
+        this.internetInput.value = 79; // Monthly bill
+        this.cellPhoneInput.value = 80; // Monthly bill
+        this.vanParkingInput.value = 140; // Monthly fee
         this.groceriesInput.value = 600; // Monthly groceries
         this.diningOutInput.value = 400; // Monthly dining
         this.transportationInput.value = 200; // Gas and maintenance
         this.entertainmentInput.value = 300; // Entertainment budget
         this.healthcareInput.value = 200; // Healthcare costs
         this.creditCardPaymentsInput.value = 500; // Credit card payments
-        this.retirement401kInput.value = 1500; // 401K contribution
-        this.iraContributionInput.value = 500; // IRA contribution
-        this.emergencyFundInput.value = 1000; // Emergency fund contribution
+        this.retirement401kInput.value = 8; // 401K contribution - 8% of bi-weekly paycheck
+        this.iraContributionInput.value = 583; // IRA contribution - maxed at $7,000 annually ($583/month)
+        this.emergencyFundInput.value = 1000; // Rolled coins savings
         this.brokerageInvestmentInput.value = 2000; // Additional investments
 
         // Update calculations
         this.calculateBudget();
+    }
+
+    updateOverviewCards() {
+        // Update overview cards with current values from screenshot
+        this.netWorthElement.textContent = '$1,789,152';
+        this.homeEquityElement.textContent = '$554,358';
+        this.investmentsElement.textContent = '$1,205,794';
+        this.vehiclesElement.textContent = '$29,000';
     }
 
     calculateBudget() {
@@ -139,7 +198,8 @@ class BudgetTool {
         const currentSalary = parseFloat(this.currentSalaryInput.value) || 0;
         const investmentIncome = parseFloat(this.investmentIncomeInput.value) || 0;
         const otherIncome = parseFloat(this.otherIncomeInput.value) || 0;
-        const totalIncome = currentSalary + investmentIncome + otherIncome;
+        const commissions = parseFloat(this.commissionsInput.value) || 0;
+        const totalIncome = currentSalary + investmentIncome + otherIncome + commissions;
 
         // Calculate fixed expenses
         const mortgagePayment = parseFloat(this.mortgagePaymentInput.value) || 0;
@@ -149,8 +209,10 @@ class BudgetTool {
         const internet = parseFloat(this.internetInput.value) || 0;
         const cellPhone = parseFloat(this.cellPhoneInput.value) || 0;
         const vanParking = parseFloat(this.vanParkingInput.value) || 0;
+        const youtubePremium = parseFloat(this.youtubePremiumInput.value) || 0;
+        const siriusXm = parseFloat(this.siriusXmInput.value) || 0;
         const totalFixedExpenses = mortgagePayment + propertyTax + homeInsurance + 
-                                 electricity + internet + cellPhone + vanParking;
+                                 electricity + internet + cellPhone + vanParking + youtubePremium + siriusXm;
 
         // Calculate variable expenses
         const groceries = parseFloat(this.groceriesInput.value) || 0;
@@ -163,8 +225,10 @@ class BudgetTool {
                                     entertainment + healthcare + creditCardPayments;
 
         // Calculate savings
-        const retirement401k = parseFloat(this.retirement401kInput.value) || 0;
-        const iraContribution = parseFloat(this.iraContributionInput.value) || 0;
+        const retirement401kPercentage = parseFloat(this.retirement401kInput.value) || 0;
+        const biWeeklyPaycheck = currentSalary / 26; // 26 pay periods per year
+        const retirement401k = (biWeeklyPaycheck * retirement401kPercentage) / 100; // Calculate as percentage of bi-weekly paycheck
+        const iraContribution = parseFloat(this.iraContributionInput.value) || 0; // Back to dollar amount
         const emergencyFund = parseFloat(this.emergencyFundInput.value) || 0;
         const brokerageInvestment = parseFloat(this.brokerageInvestmentInput.value) || 0;
         const totalSavings = retirement401k + iraContribution + emergencyFund + brokerageInvestment;
@@ -173,27 +237,109 @@ class BudgetTool {
         const totalExpenses = totalFixedExpenses + totalVariableExpenses;
         const netCashFlow = totalIncome - totalExpenses - totalSavings;
 
-        // Update display
-        this.totalIncomeElement.textContent = this.formatCurrency(totalIncome);
-        this.totalFixedExpensesElement.textContent = this.formatCurrency(totalFixedExpenses);
-        this.totalVariableExpensesElement.textContent = this.formatCurrency(totalVariableExpenses);
-        this.totalSavingsElement.textContent = this.formatCurrency(totalSavings);
-        this.summaryIncomeElement.textContent = this.formatCurrency(totalIncome);
-        this.summaryExpensesElement.textContent = this.formatCurrency(totalExpenses);
-        this.summarySavingsElement.textContent = this.formatCurrency(totalSavings);
-        this.netCashFlowElement.textContent = this.formatCurrency(netCashFlow);
+        // Update display with animation
+        this.animateValueChange(this.totalIncomeElement, totalIncome);
+        this.animateValueChange(this.totalFixedExpensesElement, totalFixedExpenses);
+        this.animateValueChange(this.totalVariableExpensesElement, totalVariableExpenses);
+        this.animateValueChange(this.totalSavingsElement, totalSavings);
+        this.animateValueChange(this.summaryIncomeElement, totalIncome);
+        this.animateValueChange(this.summaryExpensesElement, totalExpenses);
+        this.animateValueChange(this.summarySavingsElement, totalSavings);
+        this.animateValueChange(this.netCashFlowElement, netCashFlow);
 
-        // Update net cash flow color
+        // Update net cash flow color and add visual feedback
         this.netCashFlowElement.className = netCashFlow >= 0 ? 'positive' : 'negative';
+        this.netCashFlowElement.style.animation = 'pulse 0.6s ease-in-out';
+        setTimeout(() => {
+            this.netCashFlowElement.style.animation = '';
+        }, 600);
+        
+        // Calculate home equity
+        this.calculateHomeEquity();
+        
+        // Update all related components
+        this.updateCharts();
+        this.calculateFinancialIndependence();
+        this.updateActionProgress();
+    }
+
+    calculateHomeEquity() {
+        const homeValue = parseFloat(this.homeValueInput.value) || 0;
+        const mortgagePrincipal = parseFloat(this.mortgagePrincipalInput.value) || 0;
+        const homeEquity = homeValue - mortgagePrincipal;
+        
+        this.animateValueChange(this.calculatedHomeEquityElement, homeEquity);
+        this.animateValueChange(this.homeEquityElement, homeEquity);
+        
+        // Update net worth calculation
+        this.updateNetWorth();
+    }
+
+    updateNetWorth() {
+        const homeEquity = parseFloat(this.homeEquityElement.textContent.replace(/[$,]/g, '')) || 0;
+        const investments = parseFloat(this.investmentsElement.textContent.replace(/[$,]/g, '')) || 0;
+        const vehicles = parseFloat(this.vehiclesElement.textContent.replace(/[$,]/g, '')) || 0;
+        const netWorth = homeEquity + investments + vehicles;
+        
+        this.animateValueChange(this.netWorthElement, netWorth);
+    }
+
+    updatePortfolioTotal() {
+        const fidelity401k = parseFloat(this.fidelity401kInput.value) || 0;
+        const goldmanIra = parseFloat(this.goldmanIraInput.value) || 0;
+        const goldmanBrokerage = parseFloat(this.goldmanBrokerageInput.value) || 0;
+        const schwabRoth = parseFloat(this.schwabRothInput.value) || 0;
+        const schwabBrokerage = parseFloat(this.schwabBrokerageInput.value) || 0;
+        const cryptoCoinbase = parseFloat(this.cryptoCoinbaseInput.value) || 0;
+        
+        const totalPortfolio = fidelity401k + goldmanIra + goldmanBrokerage + schwabRoth + schwabBrokerage + cryptoCoinbase;
+        
+        // Update the investments element in the overview section
+        this.animateValueChange(this.investmentsElement, totalPortfolio);
+        
+        // Update the detailed breakdown text in the overview card
+        const investmentsCard = this.investmentsElement.closest('.overview-card');
+        if (investmentsCard) {
+            const changeElement = investmentsCard.querySelector('.change');
+            if (changeElement) {
+                changeElement.textContent = `401K (Fidelity): $${(fidelity401k/1000).toFixed(0)}K | IRA (Goldman): $${(goldmanIra/1000).toFixed(0)}K | Brokerage (Goldman): $${(goldmanBrokerage/1000).toFixed(0)}K | Roth IRA (Schwab): $${(schwabRoth/1000).toFixed(0)}K | Brokerage (Schwab): $${(schwabBrokerage/1000).toFixed(0)}K | Crypto (Coinbase): $${(cryptoCoinbase/1000).toFixed(0)}K`;
+            }
+        }
+        
+        // Update net worth calculation
+        this.updateNetWorth();
+    }
+
+    animateValueChange(element, newValue) {
+        if (!element) return;
+        
+        const oldValue = parseFloat(element.textContent.replace(/[$,]/g, '')) || 0;
+        const difference = newValue - oldValue;
+        
+        // Add visual feedback for changes
+        if (Math.abs(difference) > 0) {
+            element.style.animation = 'valueUpdate 0.6s ease-in-out';
+            setTimeout(() => {
+                element.style.animation = '';
+            }, 600);
+        }
+        
+        element.textContent = this.formatCurrency(newValue);
     }
 
     calculateFinancialIndependence() {
         const totalExpenses = parseFloat(this.summaryExpensesElement.textContent.replace(/[$,]/g, '')) || 0;
         const annualExpenses = totalExpenses * 12;
         const fiTarget = annualExpenses * 25; // 4% rule
-        const currentPortfolio = 1020000; // $1.02M total investments
+        const currentPortfolio = parseFloat(this.investmentsElement.textContent.replace(/[$,]/g, '')) || 0;
         const monthlySavings = parseFloat(this.totalSavingsElement.textContent.replace(/[$,]/g, '')) || 0;
         const annualSavings = monthlySavings * 12;
+
+        // Calculate portfolio gap
+        const portfolioGap = Math.max(0, fiTarget - currentPortfolio);
+        
+        // Calculate monthly portfolio income (4% rule)
+        const monthlyPortfolioIncome = (currentPortfolio * 0.04) / 12;
 
         // Calculate years to FI using the 4% rule
         let yearsToFI = 0;
@@ -206,9 +352,12 @@ class BudgetTool {
         }
 
         // Update display
-        this.annualExpensesElement.textContent = this.formatCurrency(annualExpenses);
+        this.annualExpensesElement.textContent = this.formatCurrency(totalExpenses);
+        this.annualExpensesDisplay.textContent = this.formatCurrency(annualExpenses);
         this.fiTargetElement.textContent = this.formatCurrency(fiTarget);
         this.currentPortfolioElement.textContent = this.formatCurrency(currentPortfolio);
+        this.portfolioGapElement.textContent = this.formatCurrency(portfolioGap);
+        this.monthlyPortfolioIncomeElement.textContent = this.formatCurrency(monthlyPortfolioIncome);
         this.yearsToFIElement.textContent = yearsToFI === 0 ? 'Already FI!' : `${yearsToFI} years`;
     }
 
@@ -243,7 +392,8 @@ class BudgetTool {
                         position: 'bottom',
                         labels: {
                             padding: 20,
-                            usePointStyle: true
+                            usePointStyle: true,
+                            color: '#ffffff'
                         }
                     }
                 }
@@ -282,7 +432,19 @@ class BudgetTool {
                         ticks: {
                             callback: function(value) {
                                 return '$' + value.toLocaleString();
-                            }
+                            },
+                            color: '#ffffff'
+                        },
+                        grid: {
+                            color: '#4a5568'
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            color: '#ffffff'
+                        },
+                        grid: {
+                            color: '#4a5568'
                         }
                     }
                 }
@@ -298,7 +460,7 @@ class BudgetTool {
                 labels: ['Current', '1 Year', '2 Years', '3 Years', '4 Years', '5 Years'],
                 datasets: [{
                     label: 'Net Worth Projection',
-                    data: [1020000, 1100000, 1180000, 1260000, 1340000, 1420000],
+                    data: [1789152, 1921682, 2054212, 2186742, 2319272, 2451802],
                     borderColor: '#667eea',
                     backgroundColor: 'rgba(102, 126, 234, 0.1)',
                     borderWidth: 3,
@@ -320,7 +482,19 @@ class BudgetTool {
                         ticks: {
                             callback: function(value) {
                                 return '$' + (value / 1000000).toFixed(1) + 'M';
-                            }
+                            },
+                            color: '#ffffff'
+                        },
+                        grid: {
+                            color: '#4a5568'
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            color: '#ffffff'
+                        },
+                        grid: {
+                            color: '#4a5568'
                         }
                     }
                 }
@@ -336,7 +510,7 @@ class BudgetTool {
                 labels: ['401K', 'IRA', 'Emergency Fund', 'Brokerage', 'Real Estate'],
                 datasets: [{
                     label: 'Current Allocation',
-                    data: [350000, 450000, 50000, 220000, 580000],
+                    data: [367000, 511000, 0, 282000, 554358],
                     backgroundColor: 'rgba(102, 126, 234, 0.2)',
                     borderColor: '#667eea',
                     borderWidth: 2,
@@ -359,7 +533,14 @@ class BudgetTool {
                         ticks: {
                             callback: function(value) {
                                 return '$' + (value / 1000000).toFixed(1) + 'M';
-                            }
+                            },
+                            color: '#ffffff'
+                        },
+                        grid: {
+                            color: '#4a5568'
+                        },
+                        pointLabels: {
+                            color: '#ffffff'
                         }
                     }
                 }
@@ -386,12 +567,18 @@ class BudgetTool {
     }
 
     openModal() {
-        this.modal.style.display = 'block';
+        if (this.modal) {
+            this.modal.style.display = 'block';
+        }
     }
 
     closeModal() {
-        this.modal.style.display = 'none';
-        this.expenseForm.reset();
+        if (this.modal) {
+            this.modal.style.display = 'none';
+            if (this.expenseForm) {
+                this.expenseForm.reset();
+            }
+        }
     }
 
     handleExpenseSubmit(e) {
@@ -410,19 +597,45 @@ class BudgetTool {
     }
 
     addCustomExpense(name, amount, category) {
-        // Create a new input field for the custom expense
-        const container = document.querySelector(`.budget-card:has(h3:contains("${category === 'fixed' ? 'Fixed' : category === 'variable' ? 'Variable' : 'Savings'}"))`);
+        // Find the appropriate budget card based on category
+        let targetCard;
+        const budgetCards = document.querySelectorAll('.budget-card');
         
-        if (container) {
-            const budgetItems = container.querySelector('.budget-total');
+        for (let card of budgetCards) {
+            const title = card.querySelector('h3').textContent;
+            if (category === 'fixed' && title.includes('Fixed Expenses')) {
+                targetCard = card;
+                break;
+            } else if (category === 'variable' && title.includes('Variable Expenses')) {
+                targetCard = card;
+                break;
+            } else if (category === 'savings' && title.includes('Savings & Investments')) {
+                targetCard = card;
+                break;
+            }
+        }
+        
+        if (targetCard) {
+            const budgetItems = targetCard.querySelector('.budget-total');
             const newItem = document.createElement('div');
             newItem.className = 'budget-item';
             newItem.innerHTML = `
                 <span>${name}</span>
-                <input type="number" value="${amount}" placeholder="Amount" onchange="budgetTool.calculateBudget()">
+                <input type="number" value="${amount}" placeholder="Amount">
             `;
             
             budgetItems.parentNode.insertBefore(newItem, budgetItems);
+            
+            // Add event listener to the new input
+            const newInput = newItem.querySelector('input');
+            newInput.addEventListener('input', () => {
+                this.calculateBudget();
+                this.updateCharts();
+            });
+            
+            // Recalculate budget immediately
+            this.calculateBudget();
+            this.updateCharts();
         }
     }
 
@@ -443,6 +656,340 @@ class BudgetTool {
             minimumFractionDigits: 0,
             maximumFractionDigits: 0
         }).format(amount);
+    }
+
+    exportReport() {
+        const reportDate = new Date().toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+
+        // Gather all current data
+        const netWorth = this.netWorthElement.textContent;
+        const homeEquity = this.homeEquityElement.textContent;
+        const investments = this.investmentsElement.textContent;
+        const vehicles = this.vehiclesElement.textContent;
+        
+        const totalIncome = this.totalIncomeElement.textContent;
+        const totalFixedExpenses = this.totalFixedExpensesElement.textContent;
+        const totalVariableExpenses = this.totalVariableExpensesElement.textContent;
+        const totalSavings = this.totalSavingsElement.textContent;
+        const netCashFlow = this.netCashFlowElement.textContent;
+
+        // Portfolio values
+        const fidelity401k = this.fidelity401kInput.value;
+        const goldmanIra = this.goldmanIraInput.value;
+        const goldmanBrokerage = this.goldmanBrokerageInput.value;
+        const schwabRoth = this.schwabRothInput.value;
+        const schwabBrokerage = this.schwabBrokerageInput.value;
+        const cryptoCoinbase = this.cryptoCoinbaseInput.value;
+
+        // Financial Independence data
+        const monthlyExpenses = this.annualExpensesElement.textContent;
+        const annualExpenses = this.annualExpensesDisplay.textContent;
+        const requiredPortfolio = this.fiTargetElement.textContent;
+        const currentPortfolio = this.currentPortfolioElement.textContent;
+        const portfolioGap = this.portfolioGapElement.textContent;
+        const yearsToFI = this.yearsToFIElement.textContent;
+        const monthlyPortfolioIncome = this.monthlyPortfolioIncomeElement.textContent;
+
+        // Create the report HTML
+        const reportHTML = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Craig's Financial Report - ${reportDate}</title>
+    <style>
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            border-bottom: 2px solid #3b82f6;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            color: #3b82f6;
+            margin-bottom: 10px;
+        }
+        .section {
+            margin-bottom: 30px;
+            page-break-inside: avoid;
+        }
+        .section h2 {
+            color: #1f2937;
+            border-bottom: 1px solid #e5e7eb;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        .overview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .overview-item {
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #3b82f6;
+        }
+        .overview-item h3 {
+            margin: 0 0 10px 0;
+            color: #374151;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .overview-item .amount {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1f2937;
+        }
+        .portfolio-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+        .portfolio-item {
+            background: #f8fafc;
+            padding: 12px;
+            border-radius: 6px;
+            border: 1px solid #e5e7eb;
+        }
+        .portfolio-item .account {
+            font-weight: 600;
+            color: #374151;
+        }
+        .portfolio-item .value {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #1f2937;
+        }
+        .portfolio-item .status {
+            font-size: 0.8rem;
+            color: #6b7280;
+            font-style: italic;
+        }
+        .budget-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        .budget-item {
+            background: #f8fafc;
+            padding: 12px;
+            border-radius: 6px;
+            border: 1px solid #e5e7eb;
+        }
+        .budget-item .category {
+            font-weight: 600;
+            color: #374151;
+            font-size: 0.9rem;
+        }
+        .budget-item .amount {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #1f2937;
+        }
+        .fi-summary {
+            background: #f0f9ff;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #0ea5e9;
+        }
+        .fi-summary h3 {
+            color: #0c4a6e;
+            margin-bottom: 15px;
+        }
+        .fi-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            padding: 8px 0;
+            border-bottom: 1px solid #e0f2fe;
+        }
+        .fi-item:last-child {
+            border-bottom: none;
+        }
+        .fi-item .label {
+            font-weight: 600;
+            color: #0c4a6e;
+        }
+        .fi-item .value {
+            font-weight: 700;
+            color: #0c4a6e;
+        }
+        @media print {
+            body { margin: 0; }
+            .section { page-break-inside: avoid; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Craig's Financial Planning Report</h1>
+        <p>Generated on ${reportDate}</p>
+    </div>
+
+    <div class="section">
+        <h2>Net Worth Overview</h2>
+        <div class="overview-grid">
+            <div class="overview-item">
+                <h3>Total Net Worth</h3>
+                <div class="amount">${netWorth}</div>
+            </div>
+            <div class="overview-item">
+                <h3>Home Equity</h3>
+                <div class="amount">${homeEquity}</div>
+            </div>
+            <div class="overview-item">
+                <h3>Investment Portfolio</h3>
+                <div class="amount">${investments}</div>
+            </div>
+            <div class="overview-item">
+                <h3>Vehicle Assets</h3>
+                <div class="amount">${vehicles}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>Investment Portfolio Breakdown</h2>
+        <div class="portfolio-grid">
+            <div class="portfolio-item">
+                <div class="account">401K (Fidelity)</div>
+                <div class="value">$${parseInt(fidelity401k).toLocaleString()}</div>
+                <div class="status">Rollover candidate</div>
+            </div>
+            <div class="portfolio-item">
+                <div class="account">IRA (Goldman)</div>
+                <div class="value">$${parseInt(goldmanIra).toLocaleString()}</div>
+                <div class="status">Already with Goldman</div>
+            </div>
+            <div class="portfolio-item">
+                <div class="account">Brokerage (Goldman)</div>
+                <div class="value">$${parseInt(goldmanBrokerage).toLocaleString()}</div>
+                <div class="status">Already with Goldman</div>
+            </div>
+            <div class="portfolio-item">
+                <div class="account">Roth IRA (Schwab)</div>
+                <div class="value">$${parseInt(schwabRoth).toLocaleString()}</div>
+                <div class="status">Consolidate?</div>
+            </div>
+            <div class="portfolio-item">
+                <div class="account">Brokerage (Schwab)</div>
+                <div class="value">$${parseInt(schwabBrokerage).toLocaleString()}</div>
+                <div class="status">Consolidate?</div>
+            </div>
+            <div class="portfolio-item">
+                <div class="account">Crypto (Coinbase)</div>
+                <div class="value">$${parseInt(cryptoCoinbase).toLocaleString()}</div>
+                <div class="status">Keep separate</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>Monthly Budget Summary</h2>
+        <div class="budget-grid">
+            <div class="budget-item">
+                <div class="category">Total Income</div>
+                <div class="amount">${totalIncome}</div>
+            </div>
+            <div class="budget-item">
+                <div class="category">Fixed Expenses</div>
+                <div class="amount">${totalFixedExpenses}</div>
+            </div>
+            <div class="budget-item">
+                <div class="category">Variable Expenses</div>
+                <div class="amount">${totalVariableExpenses}</div>
+            </div>
+            <div class="budget-item">
+                <div class="category">Total Savings</div>
+                <div class="amount">${totalSavings}</div>
+            </div>
+            <div class="budget-item">
+                <div class="category">Net Cash Flow</div>
+                <div class="amount">${netCashFlow}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>Job Transition Financial Planning</h2>
+        <div class="fi-summary">
+            <h3>Financial Independence Analysis</h3>
+            <div class="fi-item">
+                <span class="label">Monthly Expenses (after job loss):</span>
+                <span class="value">${monthlyExpenses}</span>
+            </div>
+            <div class="fi-item">
+                <span class="label">Annual Expenses:</span>
+                <span class="value">${annualExpenses}</span>
+            </div>
+            <div class="fi-item">
+                <span class="label">Required Portfolio (4% rule):</span>
+                <span class="value">${requiredPortfolio}</span>
+            </div>
+            <div class="fi-item">
+                <span class="label">Current Investment Portfolio:</span>
+                <span class="value">${currentPortfolio}</span>
+            </div>
+            <div class="fi-item">
+                <span class="label">Portfolio Gap:</span>
+                <span class="value">${portfolioGap}</span>
+            </div>
+            <div class="fi-item">
+                <span class="label">Years to Financial Independence:</span>
+                <span class="value">${yearsToFI}</span>
+            </div>
+            <div class="fi-item">
+                <span class="label">Monthly Portfolio Income (4%):</span>
+                <span class="value">${monthlyPortfolioIncome}</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>Goldman Sachs Meeting Notes</h2>
+        <p><strong>Portfolio Consolidation Opportunities:</strong></p>
+        <ul>
+            <li>401K rollover to Goldman IRA - pros/cons analysis needed</li>
+            <li>Portfolio income strategy during unemployment period</li>
+            <li>Asset allocation optimization for job transition</li>
+            <li>Tax optimization for severance + withdrawals</li>
+            <li>Schwab account consolidation with Goldman</li>
+        </ul>
+        
+        <p><strong>Key Questions for Goldman Sachs:</strong></p>
+        <ul>
+            <li>What are the benefits and drawbacks of rolling over 401K to Goldman IRA?</li>
+            <li>How should I structure my portfolio for income during unemployment?</li>
+            <li>What asset allocation is optimal for my job transition period?</li>
+            <li>How can I optimize taxes on severance and portfolio withdrawals?</li>
+            <li>Should I consolidate my Schwab accounts with Goldman?</li>
+        </ul>
+    </div>
+</body>
+</html>`;
+
+        // Create a new window with the report
+        const reportWindow = window.open('', '_blank');
+        reportWindow.document.write(reportHTML);
+        reportWindow.document.close();
+        
+        // Add notification
+        addNotification('Report generated successfully!', 'success');
     }
 }
 

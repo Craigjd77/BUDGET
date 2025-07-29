@@ -16,6 +16,9 @@
             <div class="header-content">
                 <h1><i class="fas fa-chart-line"></i> Craig's Budget Tool</h1>
                 <p class="subtitle">Financial Planning & Transition Dashboard</p>
+                <button class="btn btn-primary" id="exportReportBtn">
+                    <i class="fas fa-download"></i> Export Report
+                </button>
             </div>
         </header>
 
@@ -25,18 +28,32 @@
             <section class="overview-section">
                 <div class="card overview-card">
                     <h3><i class="fas fa-wallet"></i> Net Worth</h3>
-                    <div class="amount" id="netWorth">$1,020,000</div>
-                    <div class="change positive">+$45,000 this year</div>
+                    <div class="amount" id="netWorth">$1,789,152</div>
+                    <div class="change positive">+$132,530 this year</div>
                 </div>
                 <div class="card overview-card">
                     <h3><i class="fas fa-home"></i> Home Equity</h3>
-                    <div class="amount" id="homeEquity">$580,000</div>
-                    <div class="change positive">$800K value - $220K mortgage</div>
+                    <div class="amount" id="homeEquity">$554,358</div>
+                    <div class="change positive">$800K value - $245,642 mortgage</div>
+                    <div class="home-details">
+                        <div class="detail-item">
+                            <label>Home Value:</label>
+                            <input type="number" id="homeValue" value="800000" placeholder="Home value">
+                        </div>
+                        <div class="detail-item">
+                            <label>Mortgage Principal:</label>
+                            <input type="number" id="mortgagePrincipal" value="245642" placeholder="Remaining principal">
+                        </div>
+                        <div class="detail-item">
+                            <label>Home Equity:</label>
+                            <span id="calculatedHomeEquity">$554,358</span>
+                        </div>
+                    </div>
                 </div>
                 <div class="card overview-card">
                     <h3><i class="fas fa-piggy-bank"></i> Investment Portfolio</h3>
-                    <div class="amount" id="investments">$1,020,000</div>
-                    <div class="change positive">IRA: $450K | Brokerage: $220K | 401K: $350K</div>
+                    <div class="amount" id="investments">$1,205,794</div>
+                    <div class="change positive">401K (Fidelity): $367K | IRA (Goldman): $511K | Brokerage (Goldman): $282K | Roth IRA (Schwab): $6K | Brokerage (Schwab): $23K | Crypto (Coinbase): $16K</div>
                 </div>
                 <div class="card overview-card">
                     <h3><i class="fas fa-car"></i> Vehicle Assets</h3>
@@ -60,7 +77,7 @@
                         <h3><i class="fas fa-money-bill-wave"></i> Income Sources</h3>
                         <div class="budget-item">
                             <span>Current Salary (FRT)</span>
-                            <input type="number" id="currentSalary" value="0" placeholder="Enter salary">
+                            <input type="number" id="currentSalary" value="10833" placeholder="Monthly salary">
                         </div>
                         <div class="budget-item">
                             <span>Investment Income</span>
@@ -69,6 +86,10 @@
                         <div class="budget-item">
                             <span>Other Income</span>
                             <input type="number" id="otherIncome" value="0" placeholder="Side hustles, etc.">
+                        </div>
+                        <div class="budget-item">
+                            <span>Commissions</span>
+                            <input type="number" id="commissions" value="0" placeholder="One-time commission">
                         </div>
                         <div class="budget-total">
                             <strong>Total Monthly Income:</strong>
@@ -80,12 +101,12 @@
                     <div class="card budget-card">
                         <h3><i class="fas fa-anchor"></i> Fixed Expenses</h3>
                         <div class="budget-item">
-                            <span>Mortgage Payment</span>
-                            <input type="number" id="mortgagePayment" value="0" placeholder="Monthly payment">
+                            <span>Mortgage Payment (incl. property tax)</span>
+                            <input type="number" id="mortgagePayment" value="2650" placeholder="Monthly payment">
                         </div>
                         <div class="budget-item">
-                            <span>Property Tax</span>
-                            <input type="number" id="propertyTax" value="0" placeholder="Monthly average">
+                            <span>Property Tax (included above)</span>
+                            <input type="number" id="propertyTax" value="0" placeholder="Monthly average" disabled>
                         </div>
                         <div class="budget-item">
                             <span>Home Insurance</span>
@@ -107,6 +128,14 @@
                             <span>Van Parking</span>
                             <input type="number" id="vanParking" value="140" placeholder="Monthly fee">
                         </div>
+                        <div class="budget-item">
+                            <span>YouTube Premium</span>
+                            <input type="number" id="youtubePremium" value="15" placeholder="Monthly subscription">
+                        </div>
+                        <div class="budget-item">
+                            <span>Sirius XM</span>
+                            <input type="number" id="siriusXm" value="12" placeholder="Monthly subscription">
+                        </div>
                         <div class="budget-total">
                             <strong>Total Fixed Expenses:</strong>
                             <span id="totalFixedExpenses">$0</span>
@@ -125,8 +154,8 @@
                             <input type="number" id="diningOut" value="0" placeholder="Monthly budget">
                         </div>
                         <div class="budget-item">
-                            <span>Gas & Transportation</span>
-                            <input type="number" id="transportation" value="0" placeholder="Monthly budget">
+                            <span>Gas & Transportation (incl. Ubers)</span>
+                            <input type="number" id="transportation" value="0" placeholder="Gas, maintenance, Ubers">
                         </div>
                         <div class="budget-item">
                             <span>Entertainment</span>
@@ -150,16 +179,16 @@
                     <div class="card budget-card">
                         <h3><i class="fas fa-piggy-bank"></i> Savings & Investments</h3>
                         <div class="budget-item">
-                            <span>401K Contribution</span>
-                            <input type="number" id="retirement401k" value="0" placeholder="Monthly contribution">
+                            <span>401K Contribution (%)</span>
+                            <input type="number" id="retirement401k" value="8" placeholder="Percentage of paycheck" min="0" max="100" step="0.1">
                         </div>
                         <div class="budget-item">
-                            <span>IRA Contribution</span>
-                            <input type="number" id="iraContribution" value="0" placeholder="Monthly contribution">
+                            <span>IRA Contribution (Maxed $7K)</span>
+                            <input type="number" id="iraContribution" value="583" placeholder="Monthly contribution" disabled>
                         </div>
                         <div class="budget-item">
-                            <span>Emergency Fund</span>
-                            <input type="number" id="emergencyFund" value="0" placeholder="Monthly contribution">
+                            <span>Rolled Quarters, Dimes, Nickels</span>
+                            <input type="number" id="emergencyFund" value="0" placeholder="Monthly coin savings">
                         </div>
                         <div class="budget-item">
                             <span>Brokerage Investment</span>
@@ -224,6 +253,77 @@
                 </div>
             </section>
 
+            <!-- Goldman Sachs Ayco Meeting -->
+            <section class="goldman-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-handshake"></i> Goldman Sachs Ayco Meeting</h2>
+                </div>
+                
+                <div class="goldman-grid">
+                    <div class="card goldman-card">
+                        <h3><i class="fas fa-chart-pie"></i> Portfolio Consolidation Opportunity</h3>
+                        <div class="portfolio-list">
+                            <div class="portfolio-item">
+                                <span>401K (Fidelity):</span>
+                                <input type="number" id="fidelity401k" value="350000" placeholder="Current value">
+                                <span class="status">Rollover candidate</span>
+                            </div>
+                            <div class="portfolio-item">
+                                <span>IRA (Goldman):</span>
+                                <input type="number" id="goldmanIra" value="510172" placeholder="Current value">
+                                <span class="status">Already with Goldman</span>
+                            </div>
+                            <div class="portfolio-item">
+                                <span>Brokerage (Goldman):</span>
+                                <input type="number" id="goldmanBrokerage" value="308103" placeholder="Current value">
+                                <span class="status">Already with Goldman</span>
+                            </div>
+                            <div class="portfolio-item">
+                                <span>Roth IRA (Schwab):</span>
+                                <input type="number" id="schwabRoth" value="6000" placeholder="Current value">
+                                <span class="status">Consolidate?</span>
+                            </div>
+                            <div class="portfolio-item">
+                                <span>Brokerage (Schwab):</span>
+                                <input type="number" id="schwabBrokerage" value="23000" placeholder="Current value">
+                                <span class="status">Consolidate?</span>
+                            </div>
+                            <div class="portfolio-item">
+                                <span>Crypto (Coinbase):</span>
+                                <input type="number" id="cryptoCoinbase" value="16000" placeholder="Current value">
+                                <span class="status">Keep separate</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card goldman-card">
+                        <h3><i class="fas fa-question-circle"></i> Key Questions for Goldman</h3>
+                        <div class="questions-list">
+                            <div class="question-item">
+                                <i class="fas fa-arrow-right"></i>
+                                <span>401K rollover to Goldman IRA - pros/cons?</span>
+                            </div>
+                            <div class="question-item">
+                                <i class="fas fa-arrow-right"></i>
+                                <span>Portfolio income strategy during unemployment?</span>
+                            </div>
+                            <div class="question-item">
+                                <i class="fas fa-arrow-right"></i>
+                                <span>Asset allocation for job transition period?</span>
+                            </div>
+                            <div class="question-item">
+                                <i class="fas fa-arrow-right"></i>
+                                <span>Tax optimization for severance + withdrawals?</span>
+                            </div>
+                            <div class="question-item">
+                                <i class="fas fa-arrow-right"></i>
+                                <span>Consolidate Schwab accounts with Goldman?</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
             <!-- Career Transition Planning -->
             <section class="transition-section">
                 <div class="section-header">
@@ -248,22 +348,34 @@
                     </div>
 
                     <div class="card transition-card">
-                        <h3><i class="fas fa-calculator"></i> Financial Independence Calculator</h3>
+                        <h3><i class="fas fa-calculator"></i> Job Transition Financial Planning</h3>
                         <div class="fi-item">
-                            <label>Current Annual Expenses:</label>
+                            <label>Monthly Expenses (after job loss):</label>
                             <span id="annualExpenses">$0</span>
                         </div>
                         <div class="fi-item">
-                            <label>4% Rule Target:</label>
+                            <label>Annual Expenses:</label>
+                            <span id="annualExpensesDisplay">$0</span>
+                        </div>
+                        <div class="fi-item">
+                            <label>Required Portfolio (4% rule):</label>
                             <span id="fiTarget">$0</span>
                         </div>
                         <div class="fi-item">
-                            <label>Current Portfolio:</label>
-                            <span id="currentPortfolio">$1,020,000</span>
+                            <label>Current Investment Portfolio:</label>
+                            <span id="currentPortfolio">$1,205,794</span>
                         </div>
                         <div class="fi-item highlight">
-                            <label>Years to FI:</label>
+                            <label>Portfolio Gap:</label>
+                            <span id="portfolioGap">$0</span>
+                        </div>
+                        <div class="fi-item highlight">
+                            <label>Years to Financial Independence:</label>
                             <span id="yearsToFI">Calculating...</span>
+                        </div>
+                        <div class="fi-item">
+                            <label>Monthly Portfolio Income (4%):</label>
+                            <span id="monthlyPortfolioIncome">$0</span>
                         </div>
                     </div>
 
