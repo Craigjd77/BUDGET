@@ -345,54 +345,72 @@
                 
                 <div class="transition-grid">
                     <div class="card transition-card">
-                        <h3><i class="fas fa-calendar-alt"></i> Timeline Planning</h3>
-                        <div class="timeline-item">
-                            <label>Target Resignation Date:</label>
-                            <input type="date" id="resignationDate">
+                        <h3><i class="fas fa-shield-alt"></i> Safety Net Analysis</h3>
+                        <div class="fi-item">
+                            <label>Current Monthly Expenses:</label>
+                            <span id="currentMonthlyExpenses">$5,576</span>
                         </div>
-                        <div class="timeline-item">
-                            <label>Emergency Fund Target:</label>
-                            <input type="number" id="emergencyFundTarget" value="50000" placeholder="6-12 months expenses">
+                        <div class="fi-item">
+                            <label>Emergency Fund (6 months):</label>
+                            <span id="emergencyFund6Months">$33,456</span>
                         </div>
-                        <div class="timeline-item">
-                            <label>Monthly Savings Goal:</label>
-                            <input type="number" id="monthlySavingsGoal" value="0" placeholder="Monthly savings target">
+                        <div class="fi-item">
+                            <label>Emergency Fund (12 months):</label>
+                            <span id="emergencyFund12Months">$66,912</span>
+                        </div>
+                        <div class="fi-item highlight">
+                            <label>Current Emergency Fund:</label>
+                            <span id="currentEmergencyFund">$1,000</span>
+                        </div>
+                        <div class="fi-item highlight">
+                            <label>Funding Gap (12 months):</label>
+                            <span id="emergencyFundGap">$65,912</span>
                         </div>
                     </div>
 
                     <div class="card transition-card">
-                        <h3><i class="fas fa-calculator"></i> Job Transition Financial Planning</h3>
+                        <h3><i class="fas fa-chart-line"></i> Income Replacement Strategy</h3>
                         <div class="fi-item">
-                            <label>Monthly Expenses (after job loss):</label>
-                            <span id="annualExpenses">$0</span>
+                            <label>Current Monthly Income:</label>
+                            <span id="currentMonthlyIncome">$7,630</span>
                         </div>
                         <div class="fi-item">
-                            <label>Annual Expenses:</label>
-                            <span id="annualExpensesDisplay">$0</span>
+                            <label>Portfolio Monthly Income (4%):</label>
+                            <span id="portfolioMonthlyIncome">$4,019</span>
                         </div>
                         <div class="fi-item">
-                            <label>Required Portfolio (4% rule):</label>
-                            <span id="fiTarget">$0</span>
-                        </div>
-                        <div class="fi-item">
-                            <label>Current Investment Portfolio:</label>
-                            <span id="currentPortfolio">$1,205,794</span>
+                            <label>Income Gap:</label>
+                            <span id="incomeGap">$3,611</span>
                         </div>
                         <div class="fi-item highlight">
-                            <label>Portfolio Gap:</label>
-                            <span id="portfolioGap">$0</span>
+                            <label>Portfolio Covers:</label>
+                            <span id="portfolioCoverage">53%</span>
                         </div>
                         <div class="fi-item highlight">
-                            <label>Years to Financial Independence:</label>
-                            <span id="yearsToFI">Calculating...</span>
-                        </div>
-                        <div class="fi-item">
-                            <label>Monthly Portfolio Income (4%):</label>
-                            <span id="monthlyPortfolioIncome">$0</span>
+                            <label>Additional Income Needed:</label>
+                            <span id="additionalIncomeNeeded">$3,611/month</span>
                         </div>
                     </div>
 
-
+                    <div class="card transition-card">
+                        <h3><i class="fas fa-lightbulb"></i> Transition Recommendations</h3>
+                        <div class="recommendation-item">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <span>Build emergency fund to $67K (12 months expenses)</span>
+                        </div>
+                        <div class="recommendation-item">
+                            <i class="fas fa-chart-pie"></i>
+                            <span>Consider part-time work to cover $3,611/month gap</span>
+                        </div>
+                        <div class="recommendation-item">
+                            <i class="fas fa-handshake"></i>
+                            <span>Discuss portfolio consolidation with Goldman Sachs</span>
+                        </div>
+                        <div class="recommendation-item">
+                            <i class="fas fa-piggy-bank"></i>
+                            <span>Increase monthly savings to $5,000+ for faster transition</span>
+                        </div>
+                    </div>
                 </div>
             </section>
         </main>

@@ -205,6 +205,47 @@ class BudgetTool {
         this.animateValueChange(this.vehiclesElement, vehicles);
     }
 
+    updateCareerTransitionPlanning() {
+        // Get current values
+        const totalExpenses = parseFloat(this.summaryExpensesElement.textContent.replace(/[$,]/g, '')) || 0;
+        const totalIncome = parseFloat(this.totalIncomeElement.textContent.replace(/[$,]/g, '')) || 0;
+        const currentPortfolio = parseFloat(this.investmentsElement.textContent.replace(/[$,]/g, '')) || 0;
+        const emergencyFund = parseFloat(this.emergencyFundInput.value) || 0;
+        
+        // Calculate emergency fund targets
+        const emergencyFund6Months = totalExpenses * 6;
+        const emergencyFund12Months = totalExpenses * 12;
+        const emergencyFundGap = emergencyFund12Months - emergencyFund;
+        
+        // Calculate portfolio income (4% rule)
+        const portfolioMonthlyIncome = (currentPortfolio * 0.04) / 12;
+        const incomeGap = totalIncome - portfolioMonthlyIncome;
+        const portfolioCoverage = totalIncome > 0 ? (portfolioMonthlyIncome / totalIncome) * 100 : 0;
+        
+        // Update display elements
+        const currentMonthlyExpenses = document.getElementById('currentMonthlyExpenses');
+        const emergencyFund6MonthsElement = document.getElementById('emergencyFund6Months');
+        const emergencyFund12MonthsElement = document.getElementById('emergencyFund12Months');
+        const currentEmergencyFundElement = document.getElementById('currentEmergencyFund');
+        const emergencyFundGapElement = document.getElementById('emergencyFundGap');
+        const currentMonthlyIncomeElement = document.getElementById('currentMonthlyIncome');
+        const portfolioMonthlyIncomeElement = document.getElementById('portfolioMonthlyIncome');
+        const incomeGapElement = document.getElementById('incomeGap');
+        const portfolioCoverageElement = document.getElementById('portfolioCoverage');
+        const additionalIncomeNeededElement = document.getElementById('additionalIncomeNeeded');
+        
+        if (currentMonthlyExpenses) this.animateValueChange(currentMonthlyExpenses, totalExpenses);
+        if (emergencyFund6MonthsElement) this.animateValueChange(emergencyFund6MonthsElement, emergencyFund6Months);
+        if (emergencyFund12MonthsElement) this.animateValueChange(emergencyFund12MonthsElement, emergencyFund12Months);
+        if (currentEmergencyFundElement) this.animateValueChange(currentEmergencyFundElement, emergencyFund);
+        if (emergencyFundGapElement) this.animateValueChange(emergencyFundGapElement, emergencyFundGap);
+        if (currentMonthlyIncomeElement) this.animateValueChange(currentMonthlyIncomeElement, totalIncome);
+        if (portfolioMonthlyIncomeElement) this.animateValueChange(portfolioMonthlyIncomeElement, portfolioMonthlyIncome);
+        if (incomeGapElement) this.animateValueChange(incomeGapElement, incomeGap);
+        if (portfolioCoverageElement) portfolioCoverageElement.textContent = `${portfolioCoverage.toFixed(0)}%`;
+        if (additionalIncomeNeededElement) additionalIncomeNeededElement.textContent = this.formatCurrency(incomeGap);
+    }
+
     calculateBudget() {
         // Calculate income
         const grossSalary = parseFloat(this.grossSalaryInput.value) || 0;
@@ -289,6 +330,9 @@ class BudgetTool {
         
         // Update overview cards to reflect current values
         this.updateOverviewCards();
+        
+        // Update career transition planning
+        this.updateCareerTransitionPlanning();
     }
 
     calculateHomeEquity() {
