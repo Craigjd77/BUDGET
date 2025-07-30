@@ -472,14 +472,18 @@ class BudgetTool {
             yearsToFI++;
         }
 
-        // Update display
-        this.annualExpensesElement.textContent = this.formatCurrency(totalExpenses);
-        this.annualExpensesDisplay.textContent = this.formatCurrency(annualExpenses);
-        this.fiTargetElement.textContent = this.formatCurrency(fiTarget);
-        this.currentPortfolioElement.textContent = this.formatCurrency(currentPortfolio);
-        this.portfolioGapElement.textContent = this.formatCurrency(portfolioGap);
-        this.monthlyPortfolioIncomeElement.textContent = this.formatCurrency(monthlyPortfolioIncome);
-        this.yearsToFIElement.textContent = yearsToFI === 0 ? 'Already FI!' : `${yearsToFI} years`;
+        // Update display with null checks - only update if elements exist
+        try {
+            if (this.annualExpensesElement) this.annualExpensesElement.textContent = this.formatCurrency(totalExpenses);
+            if (this.annualExpensesDisplay) this.annualExpensesDisplay.textContent = this.formatCurrency(annualExpenses);
+            if (this.fiTargetElement) this.fiTargetElement.textContent = this.formatCurrency(fiTarget);
+            if (this.currentPortfolioElement) this.currentPortfolioElement.textContent = this.formatCurrency(currentPortfolio);
+            if (this.portfolioGapElement) this.portfolioGapElement.textContent = this.formatCurrency(portfolioGap);
+            if (this.monthlyPortfolioIncomeElement) this.monthlyPortfolioIncomeElement.textContent = this.formatCurrency(monthlyPortfolioIncome);
+            if (this.yearsToFIElement) this.yearsToFIElement.textContent = yearsToFI === 0 ? 'Already FI!' : `${yearsToFI} years`;
+        } catch (error) {
+            console.log('FI calculator elements not found, skipping display updates');
+        }
     }
 
     initializeCharts() {
@@ -654,11 +658,16 @@ class BudgetTool {
     }
 
     closeModal() {
+        console.log('Closing modal...');
         if (this.modal) {
             this.modal.style.display = 'none';
             if (this.expenseForm) {
                 this.expenseForm.reset();
+                console.log('Form reset');
             }
+            console.log('Modal closed successfully');
+        } else {
+            console.error('Modal element not found!');
         }
     }
 
@@ -669,12 +678,37 @@ class BudgetTool {
         const amount = parseFloat(document.getElementById('expenseAmount').value);
         const category = document.getElementById('expenseCategory').value;
 
-        // Add the expense to the appropriate category
-        this.addCustomExpense(name, amount, category);
+        // Validate inputs
+        if (!name || name.trim() === '') {
+            addNotification('Please enter an expense name', 'error');
+            return;
+        }
         
-        this.closeModal();
-        this.calculateBudget();
-        this.updateCharts();
+        if (!amount || amount <= 0) {
+            addNotification('Please enter a valid amount', 'error');
+            return;
+        }
+
+        console.log(`Submitting expense: ${name}, $${amount}, category: ${category}`);
+
+        try {
+            // Add the expense to the appropriate category
+            this.addCustomExpense(name, amount, category);
+            
+            // Close modal and reset form
+            this.closeModal();
+            
+            // Recalculate budget
+            this.calculateBudget();
+            this.updateCharts();
+            
+            // Show success message
+            addNotification(`Successfully added ${name}: ${this.formatCurrency(amount)}`, 'success');
+            
+        } catch (error) {
+            console.error('Error adding expense:', error);
+            addNotification('Error adding expense. Please try again.', 'error');
+        }
     }
 
     addCustomExpense(name, amount, category) {
@@ -703,40 +737,48 @@ class BudgetTool {
             }
         }
         
-        if (targetCard) {
-            console.log('Target card found, adding expense item');
-            const budgetItems = targetCard.querySelector('.budget-total');
-            if (!budgetItems) {
-                console.error('Budget total element not found in target card');
-                return;
-            }
-            
-            const newItem = document.createElement('div');
-            newItem.className = 'budget-item';
-            newItem.innerHTML = `
-                <span>${name}</span>
-                <input type="number" value="${amount}" placeholder="Amount">
-            `;
-            
-            budgetItems.parentNode.insertBefore(newItem, budgetItems);
-            console.log('Expense item added successfully');
-            
-            // Add event listener to the new input
-            const newInput = newItem.querySelector('input');
-            newInput.addEventListener('input', () => {
-                this.calculateBudget();
-                this.updateCharts();
-                this.calculateFinancialIndependence();
-            });
-            
-            // Recalculate budget immediately
+        if (!targetCard) {
+            console.error('Target card not found for category:', category);
+            throw new Error(`Could not find budget card for category: ${category}`);
+        }
+        
+        console.log('Target card found, adding expense item');
+        const budgetItems = targetCard.querySelector('.budget-total');
+        if (!budgetItems) {
+            console.error('Budget total element not found in target card');
+            throw new Error('Budget total element not found');
+        }
+        
+        // Create new expense item
+        const newItem = document.createElement('div');
+        newItem.className = 'budget-item';
+        newItem.innerHTML = `
+            <span>${name}</span>
+            <input type="number" value="${amount}" placeholder="Amount" step="0.01">
+        `;
+        
+        // Insert before the total
+        budgetItems.parentNode.insertBefore(newItem, budgetItems);
+        console.log('Expense item added successfully');
+        
+        // Add event listener to the new input for real-time updates
+        const newInput = newItem.querySelector('input');
+        newInput.addEventListener('input', () => {
+            console.log(`Updating expense: ${name} to $${newInput.value}`);
             this.calculateBudget();
             this.updateCharts();
             this.calculateFinancialIndependence();
-            
-            // Add success notification
-            addNotification(`Added ${name}: ${this.formatCurrency(amount)}`, 'success');
-        }
+            this.updateCareerTransitionPlanning();
+        });
+        
+        // Recalculate budget immediately
+        this.calculateBudget();
+        this.updateCharts();
+        this.calculateFinancialIndependence();
+        this.updateCareerTransitionPlanning();
+        
+        console.log(`Successfully added expense: ${name} - $${amount} to ${category} category`);
+        return true;
     }
 
     updateActionProgress() {
@@ -786,14 +828,14 @@ class BudgetTool {
         const schwabBrokerage = this.schwabBrokerageInput.value;
         const cryptoCoinbase = this.cryptoCoinbaseInput.value;
 
-        // Financial Independence data
-        const monthlyExpenses = this.annualExpensesElement.textContent;
-        const annualExpenses = this.annualExpensesDisplay.textContent;
-        const requiredPortfolio = this.fiTargetElement.textContent;
-        const currentPortfolio = this.currentPortfolioElement.textContent;
-        const portfolioGap = this.portfolioGapElement.textContent;
-        const yearsToFI = this.yearsToFIElement.textContent;
-        const monthlyPortfolioIncome = this.monthlyPortfolioIncomeElement.textContent;
+        // Financial Independence data - with null checks
+        const monthlyExpenses = this.annualExpensesElement ? this.annualExpensesElement.textContent : '$0';
+        const annualExpenses = this.annualExpensesDisplay ? this.annualExpensesDisplay.textContent : '$0';
+        const requiredPortfolio = this.fiTargetElement ? this.fiTargetElement.textContent : '$0';
+        const currentPortfolio = this.currentPortfolioElement ? this.currentPortfolioElement.textContent : '$0';
+        const portfolioGap = this.portfolioGapElement ? this.portfolioGapElement.textContent : '$0';
+        const yearsToFI = this.yearsToFIElement ? this.yearsToFIElement.textContent : '0 years';
+        const monthlyPortfolioIncome = this.monthlyPortfolioIncomeElement ? this.monthlyPortfolioIncomeElement.textContent : '$0';
 
         // Create the report HTML
         const reportHTML = `
