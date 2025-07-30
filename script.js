@@ -158,7 +158,10 @@ class BudgetTool {
         }
         
         if (this.exportReportBtn) {
-            this.exportReportBtn.addEventListener('click', () => this.exportReport());
+            this.exportReportBtn.addEventListener('click', () => {
+                console.log('Export report button clicked!');
+                this.exportReport();
+            });
             console.log('Export report button listener added');
         } else {
             console.error('Export report button not found!');
@@ -1081,13 +1084,18 @@ class BudgetTool {
 </body>
 </html>`;
 
-        // Create a new window with the report
-        const reportWindow = window.open('', '_blank');
-        reportWindow.document.write(reportHTML);
-        reportWindow.document.close();
-        
-        // Add notification
-        addNotification('Report generated successfully!', 'success');
+        // Always create a download instead of popup to avoid blockers
+        const blob = new Blob([reportHTML], { type: 'text/html' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `financial-report-${reportDate}.html`;
+        a.style.display = 'none';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        addNotification('Financial report downloaded successfully!', 'success');
     }
 }
 
