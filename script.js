@@ -225,29 +225,9 @@ class BudgetTool {
         const youtubePremium = parseFloat(this.youtubePremiumInput.value) || 0;
         const siriusXm = parseFloat(this.siriusXmInput.value) || 0;
         
-        // Calculate custom fixed expenses
-        let customFixedExpenses = 0;
-        const fixedExpensesCard = document.querySelector('.budget-card h3').closest('.budget-card');
-        if (fixedExpensesCard) {
-            const customInputs = fixedExpensesCard.querySelectorAll('.budget-item input[type="number"]');
-            customInputs.forEach(input => {
-                // Only include inputs that are not the standard fixed expense inputs
-                const inputId = input.id;
-                if (inputId && !['mortgagePayment', 'propertyTax', 'homeInsurance', 'electricity', 
-                                'internet', 'cellPhone', 'vanParking', 'youtubePremium', 'siriusXm'].includes(inputId)) {
-                    customFixedExpenses += parseFloat(input.value) || 0;
-                }
-            });
-        }
-        
+        // Calculate fixed expenses - just use the standard inputs for now
         const totalFixedExpenses = mortgagePayment + propertyTax + homeInsurance + 
-                                 electricity + internet + cellPhone + vanParking + youtubePremium + siriusXm + customFixedExpenses;
-        
-        // Debug logging
-        console.log('Fixed Expenses Calculation:', {
-            mortgagePayment, propertyTax, homeInsurance, electricity, internet, 
-            cellPhone, vanParking, youtubePremium, siriusXm, customFixedExpenses, totalFixedExpenses
-        });
+                                 electricity + internet + cellPhone + vanParking + youtubePremium + siriusXm;
 
         // Calculate variable expenses
         const groceries = parseFloat(this.groceriesInput.value) || 0;
@@ -257,29 +237,9 @@ class BudgetTool {
         const healthcare = parseFloat(this.healthcareInput.value) || 0;
         const creditCardPayments = parseFloat(this.creditCardPaymentsInput.value) || 0;
         
-        // Calculate custom variable expenses
-        let customVariableExpenses = 0;
-        const variableExpensesCard = document.querySelectorAll('.budget-card')[1]; // Second card is variable expenses
-        if (variableExpensesCard) {
-            const customInputs = variableExpensesCard.querySelectorAll('.budget-item input[type="number"]');
-            customInputs.forEach(input => {
-                // Only include inputs that are not the standard variable expense inputs
-                const inputId = input.id;
-                if (inputId && !['groceries', 'diningOut', 'transportation', 'entertainment', 
-                                'healthcare', 'creditCardPayments'].includes(inputId)) {
-                    customVariableExpenses += parseFloat(input.value) || 0;
-                }
-            });
-        }
-        
+        // Calculate variable expenses - just use the standard inputs for now
         const totalVariableExpenses = groceries + diningOut + transportation + 
-                                    entertainment + healthcare + creditCardPayments + customVariableExpenses;
-        
-        // Debug logging
-        console.log('Variable Expenses Calculation:', {
-            groceries, diningOut, transportation, entertainment, healthcare, 
-            creditCardPayments, customVariableExpenses, totalVariableExpenses
-        });
+                                    entertainment + healthcare + creditCardPayments;
 
         // Calculate savings
         const retirement401kPercentage = parseFloat(this.retirement401kInput.value) || 0;
@@ -289,21 +249,8 @@ class BudgetTool {
         const emergencyFund = parseFloat(this.emergencyFundInput.value) || 0;
         const brokerageInvestment = parseFloat(this.brokerageInvestmentInput.value) || 0;
         
-        // Calculate custom savings
-        let customSavings = 0;
-        const savingsCard = document.querySelectorAll('.budget-card')[2]; // Third card is savings
-        if (savingsCard) {
-            const customInputs = savingsCard.querySelectorAll('.budget-item input[type="number"]');
-            customInputs.forEach(input => {
-                // Only include inputs that are not the standard savings inputs
-                const inputId = input.id;
-                if (inputId && !['retirement401k', 'iraContribution', 'emergencyFund', 'brokerageInvestment'].includes(inputId)) {
-                    customSavings += parseFloat(input.value) || 0;
-                }
-            });
-        }
-        
-        const totalSavings = retirement401k + iraContribution + emergencyFund + brokerageInvestment + customSavings;
+        // Calculate savings - just use the standard inputs for now
+        const totalSavings = retirement401k + iraContribution + emergencyFund + brokerageInvestment;
 
         // Calculate totals
         const totalExpenses = totalFixedExpenses + totalVariableExpenses;
