@@ -136,10 +136,33 @@ class BudgetTool {
         });
 
         // Modal listeners
-        this.addExpenseBtn.addEventListener('click', () => this.openModal());
-        this.closeBtn.addEventListener('click', () => this.closeModal());
-        this.expenseForm.addEventListener('submit', (e) => this.handleExpenseSubmit(e));
-        this.exportReportBtn.addEventListener('click', () => this.exportReport());
+        if (this.addExpenseBtn) {
+            this.addExpenseBtn.addEventListener('click', () => this.openModal());
+            console.log('Add expense button listener added');
+        } else {
+            console.error('Add expense button not found!');
+        }
+        
+        if (this.closeBtn) {
+            this.closeBtn.addEventListener('click', () => this.closeModal());
+            console.log('Close button listener added');
+        } else {
+            console.error('Close button not found!');
+        }
+        
+        if (this.expenseForm) {
+            this.expenseForm.addEventListener('submit', (e) => this.handleExpenseSubmit(e));
+            console.log('Expense form listener added');
+        } else {
+            console.error('Expense form not found!');
+        }
+        
+        if (this.exportReportBtn) {
+            this.exportReportBtn.addEventListener('click', () => this.exportReport());
+            console.log('Export report button listener added');
+        } else {
+            console.error('Export report button not found!');
+        }
         
         // Close modal when clicking outside
         window.addEventListener('click', (e) => {
@@ -618,8 +641,12 @@ class BudgetTool {
     }
 
     openModal() {
+        console.log('Opening modal...');
         if (this.modal) {
             this.modal.style.display = 'block';
+            console.log('Modal opened successfully');
+        } else {
+            console.error('Modal element not found!');
         }
     }
 
@@ -648,26 +675,39 @@ class BudgetTool {
     }
 
     addCustomExpense(name, amount, category) {
+        console.log(`Adding custom expense: ${name}, $${amount}, category: ${category}`);
+        
         // Find the appropriate budget card based on category
         let targetCard;
         const budgetCards = document.querySelectorAll('.budget-card');
+        console.log(`Found ${budgetCards.length} budget cards`);
         
         for (let card of budgetCards) {
             const title = card.querySelector('h3').textContent;
+            console.log(`Checking card: "${title}"`);
             if (category === 'fixed' && title.includes('Fixed Expenses')) {
                 targetCard = card;
+                console.log('Found fixed expenses card');
                 break;
             } else if (category === 'variable' && title.includes('Variable Expenses')) {
                 targetCard = card;
+                console.log('Found variable expenses card');
                 break;
             } else if (category === 'savings' && title.includes('Savings & Investments')) {
                 targetCard = card;
+                console.log('Found savings card');
                 break;
             }
         }
         
         if (targetCard) {
+            console.log('Target card found, adding expense item');
             const budgetItems = targetCard.querySelector('.budget-total');
+            if (!budgetItems) {
+                console.error('Budget total element not found in target card');
+                return;
+            }
+            
             const newItem = document.createElement('div');
             newItem.className = 'budget-item';
             newItem.innerHTML = `
@@ -676,6 +716,7 @@ class BudgetTool {
             `;
             
             budgetItems.parentNode.insertBefore(newItem, budgetItems);
+            console.log('Expense item added successfully');
             
             // Add event listener to the new input
             const newInput = newItem.querySelector('input');
@@ -715,6 +756,7 @@ class BudgetTool {
     }
 
     exportReport() {
+        console.log('Export report called...');
         const reportDate = new Date().toLocaleDateString('en-US', {
             year: 'numeric',
             month: 'long',
