@@ -231,11 +231,10 @@ class BudgetTool {
         if (fixedExpensesCard) {
             const customInputs = fixedExpensesCard.querySelectorAll('.budget-item input[type="number"]');
             customInputs.forEach(input => {
-                if (input !== this.mortgagePaymentInput && input !== this.propertyTaxInput && 
-                    input !== this.homeInsuranceInput && input !== this.electricityInput && 
-                    input !== this.internetInput && input !== this.cellPhoneInput && 
-                    input !== this.vanParkingInput && input !== this.youtubePremiumInput && 
-                    input !== this.siriusXmInput) {
+                // Only include inputs that are not the standard fixed expense inputs
+                const inputId = input.id;
+                if (inputId && !['mortgagePayment', 'propertyTax', 'homeInsurance', 'electricity', 
+                                'internet', 'cellPhone', 'vanParking', 'youtubePremium', 'siriusXm'].includes(inputId)) {
                     customFixedExpenses += parseFloat(input.value) || 0;
                 }
             });
@@ -243,6 +242,12 @@ class BudgetTool {
         
         const totalFixedExpenses = mortgagePayment + propertyTax + homeInsurance + 
                                  electricity + internet + cellPhone + vanParking + youtubePremium + siriusXm + customFixedExpenses;
+        
+        // Debug logging
+        console.log('Fixed Expenses Calculation:', {
+            mortgagePayment, propertyTax, homeInsurance, electricity, internet, 
+            cellPhone, vanParking, youtubePremium, siriusXm, customFixedExpenses, totalFixedExpenses
+        });
 
         // Calculate variable expenses
         const groceries = parseFloat(this.groceriesInput.value) || 0;
@@ -258,9 +263,10 @@ class BudgetTool {
         if (variableExpensesCard) {
             const customInputs = variableExpensesCard.querySelectorAll('.budget-item input[type="number"]');
             customInputs.forEach(input => {
-                if (input !== this.groceriesInput && input !== this.diningOutInput && 
-                    input !== this.transportationInput && input !== this.entertainmentInput && 
-                    input !== this.healthcareInput && input !== this.creditCardPaymentsInput) {
+                // Only include inputs that are not the standard variable expense inputs
+                const inputId = input.id;
+                if (inputId && !['groceries', 'diningOut', 'transportation', 'entertainment', 
+                                'healthcare', 'creditCardPayments'].includes(inputId)) {
                     customVariableExpenses += parseFloat(input.value) || 0;
                 }
             });
@@ -268,6 +274,12 @@ class BudgetTool {
         
         const totalVariableExpenses = groceries + diningOut + transportation + 
                                     entertainment + healthcare + creditCardPayments + customVariableExpenses;
+        
+        // Debug logging
+        console.log('Variable Expenses Calculation:', {
+            groceries, diningOut, transportation, entertainment, healthcare, 
+            creditCardPayments, customVariableExpenses, totalVariableExpenses
+        });
 
         // Calculate savings
         const retirement401kPercentage = parseFloat(this.retirement401kInput.value) || 0;
@@ -283,8 +295,9 @@ class BudgetTool {
         if (savingsCard) {
             const customInputs = savingsCard.querySelectorAll('.budget-item input[type="number"]');
             customInputs.forEach(input => {
-                if (input !== this.retirement401kInput && input !== this.iraContributionInput && 
-                    input !== this.emergencyFundInput && input !== this.brokerageInvestmentInput) {
+                // Only include inputs that are not the standard savings inputs
+                const inputId = input.id;
+                if (inputId && !['retirement401k', 'iraContribution', 'emergencyFund', 'brokerageInvestment'].includes(inputId)) {
                     customSavings += parseFloat(input.value) || 0;
                 }
             });
