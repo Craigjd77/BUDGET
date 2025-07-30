@@ -192,11 +192,17 @@ class BudgetTool {
     }
 
     updateOverviewCards() {
-        // Update overview cards with current values from screenshot
-        this.netWorthElement.textContent = '$1,789,152';
-        this.homeEquityElement.textContent = '$554,358';
-        this.investmentsElement.textContent = '$1,205,794';
-        this.vehiclesElement.textContent = '$29,000';
+        // Calculate current values dynamically
+        const homeEquity = parseFloat(this.homeEquityElement.textContent.replace(/[$,]/g, '')) || 0;
+        const investments = parseFloat(this.investmentsElement.textContent.replace(/[$,]/g, '')) || 0;
+        const vehicles = parseFloat(this.vehiclesElement.textContent.replace(/[$,]/g, '')) || 0;
+        const netWorth = homeEquity + investments + vehicles;
+        
+        // Update with current calculated values
+        this.animateValueChange(this.netWorthElement, netWorth);
+        this.animateValueChange(this.homeEquityElement, homeEquity);
+        this.animateValueChange(this.investmentsElement, investments);
+        this.animateValueChange(this.vehiclesElement, vehicles);
     }
 
     calculateBudget() {
@@ -218,8 +224,25 @@ class BudgetTool {
         const vanParking = parseFloat(this.vanParkingInput.value) || 0;
         const youtubePremium = parseFloat(this.youtubePremiumInput.value) || 0;
         const siriusXm = parseFloat(this.siriusXmInput.value) || 0;
+        
+        // Calculate custom fixed expenses
+        let customFixedExpenses = 0;
+        const fixedExpensesCard = document.querySelector('.budget-card h3').closest('.budget-card');
+        if (fixedExpensesCard) {
+            const customInputs = fixedExpensesCard.querySelectorAll('.budget-item input[type="number"]');
+            customInputs.forEach(input => {
+                if (input !== this.mortgagePaymentInput && input !== this.propertyTaxInput && 
+                    input !== this.homeInsuranceInput && input !== this.electricityInput && 
+                    input !== this.internetInput && input !== this.cellPhoneInput && 
+                    input !== this.vanParkingInput && input !== this.youtubePremiumInput && 
+                    input !== this.siriusXmInput) {
+                    customFixedExpenses += parseFloat(input.value) || 0;
+                }
+            });
+        }
+        
         const totalFixedExpenses = mortgagePayment + propertyTax + homeInsurance + 
-                                 electricity + internet + cellPhone + vanParking + youtubePremium + siriusXm;
+                                 electricity + internet + cellPhone + vanParking + youtubePremium + siriusXm + customFixedExpenses;
 
         // Calculate variable expenses
         const groceries = parseFloat(this.groceriesInput.value) || 0;
@@ -228,8 +251,23 @@ class BudgetTool {
         const entertainment = parseFloat(this.entertainmentInput.value) || 0;
         const healthcare = parseFloat(this.healthcareInput.value) || 0;
         const creditCardPayments = parseFloat(this.creditCardPaymentsInput.value) || 0;
+        
+        // Calculate custom variable expenses
+        let customVariableExpenses = 0;
+        const variableExpensesCard = document.querySelectorAll('.budget-card')[1]; // Second card is variable expenses
+        if (variableExpensesCard) {
+            const customInputs = variableExpensesCard.querySelectorAll('.budget-item input[type="number"]');
+            customInputs.forEach(input => {
+                if (input !== this.groceriesInput && input !== this.diningOutInput && 
+                    input !== this.transportationInput && input !== this.entertainmentInput && 
+                    input !== this.healthcareInput && input !== this.creditCardPaymentsInput) {
+                    customVariableExpenses += parseFloat(input.value) || 0;
+                }
+            });
+        }
+        
         const totalVariableExpenses = groceries + diningOut + transportation + 
-                                    entertainment + healthcare + creditCardPayments;
+                                    entertainment + healthcare + creditCardPayments + customVariableExpenses;
 
         // Calculate savings
         const retirement401kPercentage = parseFloat(this.retirement401kInput.value) || 0;
@@ -238,7 +276,21 @@ class BudgetTool {
         const iraContribution = parseFloat(this.iraContributionInput.value) || 0; // Back to dollar amount
         const emergencyFund = parseFloat(this.emergencyFundInput.value) || 0;
         const brokerageInvestment = parseFloat(this.brokerageInvestmentInput.value) || 0;
-        const totalSavings = retirement401k + iraContribution + emergencyFund + brokerageInvestment;
+        
+        // Calculate custom savings
+        let customSavings = 0;
+        const savingsCard = document.querySelectorAll('.budget-card')[2]; // Third card is savings
+        if (savingsCard) {
+            const customInputs = savingsCard.querySelectorAll('.budget-item input[type="number"]');
+            customInputs.forEach(input => {
+                if (input !== this.retirement401kInput && input !== this.iraContributionInput && 
+                    input !== this.emergencyFundInput && input !== this.brokerageInvestmentInput) {
+                    customSavings += parseFloat(input.value) || 0;
+                }
+            });
+        }
+        
+        const totalSavings = retirement401k + iraContribution + emergencyFund + brokerageInvestment + customSavings;
 
         // Calculate totals
         const totalExpenses = totalFixedExpenses + totalVariableExpenses;
@@ -274,6 +326,9 @@ class BudgetTool {
         this.updateCharts();
         this.calculateFinancialIndependence();
         this.updateActionProgress();
+        
+        // Update overview cards to reflect current values
+        this.updateOverviewCards();
     }
 
     calculateHomeEquity() {
@@ -323,6 +378,9 @@ class BudgetTool {
         
         // Update net worth calculation
         this.updateNetWorth();
+        
+        // Update overview cards
+        this.updateOverviewCards();
     }
 
     animateValueChange(element, newValue) {
@@ -602,11 +660,16 @@ class BudgetTool {
             newInput.addEventListener('input', () => {
                 this.calculateBudget();
                 this.updateCharts();
+                this.calculateFinancialIndependence();
             });
             
             // Recalculate budget immediately
             this.calculateBudget();
             this.updateCharts();
+            this.calculateFinancialIndependence();
+            
+            // Add success notification
+            addNotification(`Added ${name}: ${this.formatCurrency(amount)}`, 'success');
         }
     }
 
