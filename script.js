@@ -67,6 +67,15 @@ class BudgetTool {
         this.netCashFlowElement = document.getElementById('netCashFlow');
         this.grossSalaryDisplay = document.getElementById('grossSalaryDisplay');
         this.netSalaryDisplay = document.getElementById('netSalaryDisplay');
+        
+        // Quick Actions elements
+        this.healthScoreElement = document.getElementById('healthScore');
+        this.savingsRateMetric = document.getElementById('savingsRateMetric');
+        this.debtRatioMetric = document.getElementById('debtRatioMetric');
+        this.emergencyFundMetric = document.getElementById('emergencyFundMetric');
+        this.taxSavings401k = document.getElementById('taxSavings401k');
+        this.taxSavingsIRA = document.getElementById('taxSavingsIRA');
+        this.totalTaxSavings = document.getElementById('totalTaxSavings');
 
         // FI Calculator elements
         this.annualExpensesElement = document.getElementById('annualExpenses');
@@ -258,6 +267,9 @@ class BudgetTool {
 
         // Update net cash flow color and add visual feedback
         this.netCashFlowElement.className = netCashFlow >= 0 ? 'positive' : 'negative';
+        
+        // Update financial health metrics
+        this.updateFinancialHealth();
         this.netCashFlowElement.style.animation = 'pulse 0.6s ease-in-out';
         setTimeout(() => {
             this.netCashFlowElement.style.animation = '';
@@ -291,6 +303,84 @@ class BudgetTool {
         const netWorth = homeEquity + investments + vehicles;
         
         this.animateValueChange(this.netWorthElement, netWorth);
+    }
+
+    updateFinancialHealth() {
+        // Calculate savings rate
+        const totalIncome = parseFloat(this.totalIncomeElement.textContent.replace(/[$,]/g, '')) || 0;
+        const totalSavings = parseFloat(this.totalSavingsElement.textContent.replace(/[$,]/g, '')) || 0;
+        const savingsRate = totalIncome > 0 ? (totalSavings / totalIncome) * 100 : 0;
+        
+        // Calculate debt ratio
+        const mortgagePrincipal = parseFloat(this.mortgagePrincipalInput.value) || 0;
+        const homeValue = parseFloat(this.homeValueInput.value) || 0;
+        const debtRatio = homeValue > 0 ? (mortgagePrincipal / homeValue) * 100 : 0;
+        
+        // Calculate emergency fund months
+        const monthlyExpenses = parseFloat(this.summaryExpensesElement.textContent.replace(/[$,]/g, '')) || 0;
+        const emergencyFund = parseFloat(this.emergencyFundInput.value) || 0;
+        const emergencyMonths = monthlyExpenses > 0 ? emergencyFund / monthlyExpenses : 0;
+        
+        // Calculate tax savings
+        const grossSalary = parseFloat(this.grossSalaryInput.value) || 0;
+        const retirement401kPercentage = parseFloat(this.retirement401kInput.value) || 0;
+        const iraContribution = parseFloat(this.iraContributionInput.value) || 0;
+        
+        const annual401kContribution = (grossSalary / 26) * (retirement401kPercentage / 100) * 26;
+        const annualIRAContribution = iraContribution * 12;
+        
+        const taxSavings401k = annual401kContribution * 0.24; // 24% tax bracket
+        const taxSavingsIRA = annualIRAContribution * 0.24;
+        const totalTaxSavings = taxSavings401k + taxSavingsIRA;
+        
+        // Calculate overall health score (0-100)
+        let healthScore = 0;
+        
+        // Savings rate component (30 points)
+        if (savingsRate >= 20) healthScore += 30;
+        else if (savingsRate >= 15) healthScore += 25;
+        else if (savingsRate >= 10) healthScore += 20;
+        else if (savingsRate >= 5) healthScore += 10;
+        
+        // Debt ratio component (25 points)
+        if (debtRatio <= 20) healthScore += 25;
+        else if (debtRatio <= 30) healthScore += 20;
+        else if (debtRatio <= 40) healthScore += 15;
+        else if (debtRatio <= 50) healthScore += 10;
+        
+        // Emergency fund component (25 points)
+        if (emergencyMonths >= 12) healthScore += 25;
+        else if (emergencyMonths >= 9) healthScore += 20;
+        else if (emergencyMonths >= 6) healthScore += 15;
+        else if (emergencyMonths >= 3) healthScore += 10;
+        
+        // Investment portfolio component (20 points)
+        const portfolioValue = parseFloat(this.investmentsElement.textContent.replace(/[$,]/g, '')) || 0;
+        if (portfolioValue >= 1000000) healthScore += 20;
+        else if (portfolioValue >= 500000) healthScore += 15;
+        else if (portfolioValue >= 250000) healthScore += 10;
+        else if (portfolioValue >= 100000) healthScore += 5;
+        
+        // Update display elements
+        if (this.healthScoreElement) this.healthScoreElement.textContent = Math.round(healthScore);
+        if (this.savingsRateMetric) this.savingsRateMetric.textContent = `${savingsRate.toFixed(1)}%`;
+        if (this.debtRatioMetric) this.debtRatioMetric.textContent = `${debtRatio.toFixed(1)}%`;
+        if (this.emergencyFundMetric) this.emergencyFundMetric.textContent = `${emergencyMonths.toFixed(1)} months`;
+        if (this.taxSavings401k) this.taxSavings401k.textContent = this.formatCurrency(taxSavings401k);
+        if (this.taxSavingsIRA) this.taxSavingsIRA.textContent = this.formatCurrency(taxSavingsIRA);
+        if (this.totalTaxSavings) this.totalTaxSavings.textContent = this.formatCurrency(totalTaxSavings);
+        
+        // Update health score color based on score
+        const scoreCircle = document.querySelector('.score-circle');
+        if (scoreCircle) {
+            if (healthScore >= 80) {
+                scoreCircle.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+            } else if (healthScore >= 60) {
+                scoreCircle.style.background = 'linear-gradient(135deg, #f59e0b, #d97706)';
+            } else {
+                scoreCircle.style.background = 'linear-gradient(135deg, #ef4444, #dc2626)';
+            }
+        }
     }
 
     updatePortfolioTotal() {
