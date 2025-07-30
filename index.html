@@ -76,8 +76,12 @@
                     <div class="card budget-card">
                         <h3><i class="fas fa-money-bill-wave"></i> Income Sources</h3>
                         <div class="budget-item">
-                            <span>Current Salary (FRT)</span>
-                            <input type="number" id="currentSalary" value="10833" placeholder="Monthly salary">
+                            <span>Gross Salary (Annual)</span>
+                            <input type="number" id="grossSalary" value="130000" placeholder="Annual gross salary">
+                        </div>
+                        <div class="budget-item">
+                            <span>Net Take-Home (Monthly)</span>
+                            <input type="number" id="netSalary" value="7630" placeholder="Monthly net after taxes">
                         </div>
                         <div class="budget-item">
                             <span>Investment Income</span>
@@ -92,8 +96,16 @@
                             <input type="number" id="commissions" value="0" placeholder="One-time commission">
                         </div>
                         <div class="budget-total">
-                            <strong>Total Monthly Income:</strong>
+                            <strong>Total Monthly Income (Net):</strong>
                             <span id="totalIncome">$0</span>
+                        </div>
+                        <div class="budget-item" style="background: rgba(59, 130, 246, 0.1); border-left: 4px solid #3b82f6;">
+                            <span>Gross Annual Salary:</span>
+                            <span id="grossSalaryDisplay">$130,000</span>
+                        </div>
+                        <div class="budget-item" style="background: rgba(16, 185, 129, 0.1); border-left: 4px solid #10b981;">
+                            <span>Net Monthly Take-Home:</span>
+                            <span id="netSalaryDisplay">$7,630</span>
                         </div>
                     </div>
 
@@ -227,28 +239,40 @@
                 </div>
             </section>
 
-            <!-- Charts Section -->
+            <!-- Financial Analytics Section -->
             <section class="charts-section">
                 <div class="section-header">
-                    <h2><i class="fas fa-chart-area"></i> Financial Analytics</h2>
+                    <h2><i class="fas fa-chart-area"></i> Financial Analytics & Insights</h2>
                 </div>
                 
                 <div class="charts-grid">
                     <div class="card chart-card">
-                        <h3>Expense Breakdown</h3>
-                        <canvas id="expenseChart"></canvas>
+                        <h3><i class="fas fa-pie-chart"></i> Cash Flow Analysis</h3>
+                        <canvas id="cashFlowChart"></canvas>
+                        <div class="chart-insight">
+                            <span id="cashFlowInsight">Positive cash flow enables savings</span>
+                        </div>
                     </div>
                     <div class="card chart-card">
-                        <h3>Income vs Expenses</h3>
-                        <canvas id="incomeExpenseChart"></canvas>
+                        <h3><i class="fas fa-chart-line"></i> Financial Independence Timeline</h3>
+                        <canvas id="fiTimelineChart"></canvas>
+                        <div class="chart-insight">
+                            <span id="fiTimelineInsight">Years to FI: <strong id="yearsToFI">4</strong></span>
+                        </div>
                     </div>
                     <div class="card chart-card">
-                        <h3>Net Worth Projection</h3>
-                        <canvas id="netWorthChart"></canvas>
+                        <h3><i class="fas fa-chart-bar"></i> Expense Optimization</h3>
+                        <canvas id="expenseOptimizationChart"></canvas>
+                        <div class="chart-insight">
+                            <span id="expenseOptimizationInsight">Largest expense: <strong id="largestExpense">Mortgage</strong></span>
+                        </div>
                     </div>
                     <div class="card chart-card">
-                        <h3>Savings Rate</h3>
-                        <canvas id="savingsChart"></canvas>
+                        <h3><i class="fas fa-chart-pie"></i> Portfolio Allocation</h3>
+                        <canvas id="portfolioAllocationChart"></canvas>
+                        <div class="chart-insight">
+                            <span id="portfolioAllocationInsight">Diversified across <strong id="accountCount">6</strong> accounts</span>
+                        </div>
                     </div>
                 </div>
             </section>

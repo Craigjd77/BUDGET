@@ -441,7 +441,22 @@ body {
 }
 
 .chart-card canvas {
-    max-height: 250px;
+    max-height: 180px;
+}
+
+.chart-insight {
+    margin-top: 10px;
+    padding: 8px 12px;
+    background: rgba(59, 130, 246, 0.1);
+    border-left: 3px solid #3b82f6;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    color: #e2e8f0;
+}
+
+.chart-insight strong {
+    color: #60a5fa;
+    font-weight: 600;
 }
 
 .chart-card h3 {

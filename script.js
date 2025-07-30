@@ -20,7 +20,8 @@ class BudgetTool {
         this.vehiclesElement = document.getElementById('vehicles');
 
         // Income elements
-        this.currentSalaryInput = document.getElementById('currentSalary');
+        this.grossSalaryInput = document.getElementById('grossSalary');
+        this.netSalaryInput = document.getElementById('netSalary');
         this.investmentIncomeInput = document.getElementById('investmentIncome');
         this.otherIncomeInput = document.getElementById('otherIncome');
         this.commissionsInput = document.getElementById('commissions');
@@ -64,6 +65,8 @@ class BudgetTool {
         this.summaryExpensesElement = document.getElementById('summaryExpenses');
         this.summarySavingsElement = document.getElementById('summarySavings');
         this.netCashFlowElement = document.getElementById('netCashFlow');
+        this.grossSalaryDisplay = document.getElementById('grossSalaryDisplay');
+        this.netSalaryDisplay = document.getElementById('netSalaryDisplay');
 
         // FI Calculator elements
         this.annualExpensesElement = document.getElementById('annualExpenses');
@@ -99,7 +102,7 @@ class BudgetTool {
     setupEventListeners() {
         // Budget calculation listeners
         const budgetInputs = [
-            this.currentSalaryInput, this.investmentIncomeInput, this.otherIncomeInput, this.commissionsInput,
+            this.grossSalaryInput, this.netSalaryInput, this.investmentIncomeInput, this.otherIncomeInput, this.commissionsInput,
             this.mortgagePaymentInput, this.propertyTaxInput, this.homeInsuranceInput,
             this.electricityInput, this.internetInput, this.cellPhoneInput, this.vanParkingInput,
             this.youtubePremiumInput, this.siriusXmInput,
@@ -159,7 +162,8 @@ class BudgetTool {
 
     loadDefaultValues() {
         // Set default values based on Craig's current profile from screenshot
-        this.currentSalaryInput.value = 10833; // Monthly salary - $130,000 annual / 12 months
+        this.grossSalaryInput.value = 130000; // Annual gross salary - $130,000
+        this.netSalaryInput.value = 7630; // Monthly net salary after MA taxes
         this.investmentIncomeInput.value = 0; // No investment income currently
         this.otherIncomeInput.value = 0; // No other income sources
         this.commissionsInput.value = 0; // No commission income currently
@@ -195,11 +199,12 @@ class BudgetTool {
 
     calculateBudget() {
         // Calculate income
-        const currentSalary = parseFloat(this.currentSalaryInput.value) || 0;
+        const grossSalary = parseFloat(this.grossSalaryInput.value) || 0;
+        const netSalary = parseFloat(this.netSalaryInput.value) || 0;
         const investmentIncome = parseFloat(this.investmentIncomeInput.value) || 0;
         const otherIncome = parseFloat(this.otherIncomeInput.value) || 0;
         const commissions = parseFloat(this.commissionsInput.value) || 0;
-        const totalIncome = currentSalary + investmentIncome + otherIncome + commissions;
+        const totalIncome = netSalary + investmentIncome + otherIncome + commissions; // Use net salary for cash flow
 
         // Calculate fixed expenses
         const mortgagePayment = parseFloat(this.mortgagePaymentInput.value) || 0;
@@ -226,7 +231,7 @@ class BudgetTool {
 
         // Calculate savings
         const retirement401kPercentage = parseFloat(this.retirement401kInput.value) || 0;
-        const biWeeklyPaycheck = currentSalary / 26; // 26 pay periods per year
+        const biWeeklyPaycheck = grossSalary / 26; // 26 pay periods per year - use gross for 401K calculation
         const retirement401k = (biWeeklyPaycheck * retirement401kPercentage) / 100; // Calculate as percentage of bi-weekly paycheck
         const iraContribution = parseFloat(this.iraContributionInput.value) || 0; // Back to dollar amount
         const emergencyFund = parseFloat(this.emergencyFundInput.value) || 0;
@@ -246,6 +251,10 @@ class BudgetTool {
         this.animateValueChange(this.summaryExpensesElement, totalExpenses);
         this.animateValueChange(this.summarySavingsElement, totalSavings);
         this.animateValueChange(this.netCashFlowElement, netCashFlow);
+        
+        // Update salary displays
+        this.grossSalaryDisplay.textContent = this.formatCurrency(grossSalary);
+        this.netSalaryDisplay.textContent = this.formatCurrency(netSalary);
 
         // Update net cash flow color and add visual feedback
         this.netCashFlowElement.className = netCashFlow >= 0 ? 'positive' : 'negative';
@@ -362,24 +371,25 @@ class BudgetTool {
     }
 
     initializeCharts() {
-        this.createExpenseChart();
-        this.createIncomeExpenseChart();
-        this.createNetWorthChart();
-        this.createSavingsChart();
+        this.createCashFlowChart();
+        this.createFITimelineChart();
+        this.createExpenseOptimizationChart();
+        this.createPortfolioAllocationChart();
     }
 
-    createExpenseChart() {
-        const ctx = document.getElementById('expenseChart').getContext('2d');
-        this.expenseChart = new Chart(ctx, {
+    createCashFlowChart() {
+        const ctx = document.getElementById('cashFlowChart').getContext('2d');
+        this.cashFlowChart = new Chart(ctx, {
             type: 'doughnut',
             data: {
-                labels: ['Fixed Expenses', 'Variable Expenses', 'Savings'],
+                labels: ['Income', 'Expenses', 'Savings', 'Net Cash Flow'],
                 datasets: [{
-                    data: [0, 0, 0],
+                    data: [7630, 4000, 2000, 1630],
                     backgroundColor: [
-                        '#667eea',
-                        '#764ba2',
-                        '#f093fb'
+                        '#10b981', // Green for income
+                        '#ef4444', // Red for expenses
+                        '#3b82f6', // Blue for savings
+                        '#f59e0b'  // Orange for net cash flow
                     ],
                     borderWidth: 0
                 }]
@@ -391,9 +401,10 @@ class BudgetTool {
                     legend: {
                         position: 'bottom',
                         labels: {
-                            padding: 20,
+                            padding: 15,
                             usePointStyle: true,
-                            color: '#ffffff'
+                            color: '#ffffff',
+                            font: { size: 11 }
                         }
                     }
                 }
@@ -401,19 +412,85 @@ class BudgetTool {
         });
     }
 
-    createIncomeExpenseChart() {
-        const ctx = document.getElementById('incomeExpenseChart').getContext('2d');
-        this.incomeExpenseChart = new Chart(ctx, {
+    createFITimelineChart() {
+        const ctx = document.getElementById('fiTimelineChart').getContext('2d');
+        this.fiTimelineChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Current', '1 Year', '2 Years', '3 Years', '4 Years', '5 Years'],
+                datasets: [{
+                    label: 'Portfolio Value',
+                    data: [1205794, 1350000, 1500000, 1650000, 1800000, 1950000],
+                    borderColor: '#10b981',
+                    backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4
+                }, {
+                    label: 'FI Target (4% Rule)',
+                    data: [1664700, 1664700, 1664700, 1664700, 1664700, 1664700],
+                    borderColor: '#ef4444',
+                    backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                    borderWidth: 2,
+                    borderDash: [5, 5],
+                    fill: false,
+                    tension: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            color: '#ffffff',
+                            font: { size: 11 }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return '$' + (value / 1000000).toFixed(1) + 'M';
+                            },
+                            color: '#ffffff'
+                        },
+                        grid: {
+                            color: '#4a5568'
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            color: '#ffffff'
+                        },
+                        grid: {
+                            color: '#4a5568'
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    createExpenseOptimizationChart() {
+        const ctx = document.getElementById('expenseOptimizationChart').getContext('2d');
+        this.expenseOptimizationChart = new Chart(ctx, {
             type: 'bar',
             data: {
-                labels: ['Income', 'Expenses', 'Savings'],
+                labels: ['Mortgage', 'Groceries', 'Transportation', 'Entertainment', 'Healthcare', 'Other'],
                 datasets: [{
-                    label: 'Monthly Amount',
-                    data: [0, 0, 0],
+                    label: 'Monthly Expense',
+                    data: [2650, 600, 300, 200, 150, 100],
                     backgroundColor: [
-                        '#48bb78',
-                        '#f56565',
-                        '#4299e1'
+                        '#ef4444', // Red for largest expense
+                        '#10b981', // Green for essential
+                        '#3b82f6', // Blue for transportation
+                        '#f59e0b', // Orange for entertainment
+                        '#8b5cf6', // Purple for healthcare
+                        '#6b7280'  // Gray for other
                     ],
                     borderWidth: 0
                 }]
@@ -441,7 +518,8 @@ class BudgetTool {
                     },
                     x: {
                         ticks: {
-                            color: '#ffffff'
+                            color: '#ffffff',
+                            font: { size: 10 }
                         },
                         grid: {
                             color: '#4a5568'
@@ -452,20 +530,23 @@ class BudgetTool {
         });
     }
 
-    createNetWorthChart() {
-        const ctx = document.getElementById('netWorthChart').getContext('2d');
-        this.netWorthChart = new Chart(ctx, {
-            type: 'line',
+    createPortfolioAllocationChart() {
+        const ctx = document.getElementById('portfolioAllocationChart').getContext('2d');
+        this.portfolioAllocationChart = new Chart(ctx, {
+            type: 'doughnut',
             data: {
-                labels: ['Current', '1 Year', '2 Years', '3 Years', '4 Years', '5 Years'],
+                labels: ['Fidelity 401K', 'Goldman IRA', 'Goldman Brokerage', 'Schwab Roth', 'Schwab Brokerage', 'Crypto'],
                 datasets: [{
-                    label: 'Net Worth Projection',
-                    data: [1789152, 1921682, 2054212, 2186742, 2319272, 2451802],
-                    borderColor: '#667eea',
-                    backgroundColor: 'rgba(102, 126, 234, 0.1)',
-                    borderWidth: 3,
-                    fill: true,
-                    tension: 0.4
+                    data: [350000, 510172, 308103, 6000, 23000, 16000],
+                    backgroundColor: [
+                        '#3b82f6', // Blue for 401K
+                        '#10b981', // Green for IRA
+                        '#f59e0b', // Orange for brokerage
+                        '#8b5cf6', // Purple for Roth
+                        '#ef4444', // Red for Schwab brokerage
+                        '#6b7280'  // Gray for crypto
+                    ],
+                    borderWidth: 0
                 }]
             },
             options: {
@@ -473,74 +554,12 @@ class BudgetTool {
                 maintainAspectRatio: false,
                 plugins: {
                     legend: {
-                        display: false
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            callback: function(value) {
-                                return '$' + (value / 1000000).toFixed(1) + 'M';
-                            },
-                            color: '#ffffff'
-                        },
-                        grid: {
-                            color: '#4a5568'
-                        }
-                    },
-                    x: {
-                        ticks: {
-                            color: '#ffffff'
-                        },
-                        grid: {
-                            color: '#4a5568'
-                        }
-                    }
-                }
-            }
-        });
-    }
-
-    createSavingsChart() {
-        const ctx = document.getElementById('savingsChart').getContext('2d');
-        this.savingsChart = new Chart(ctx, {
-            type: 'radar',
-            data: {
-                labels: ['401K', 'IRA', 'Emergency Fund', 'Brokerage', 'Real Estate'],
-                datasets: [{
-                    label: 'Current Allocation',
-                    data: [367000, 511000, 0, 282000, 554358],
-                    backgroundColor: 'rgba(102, 126, 234, 0.2)',
-                    borderColor: '#667eea',
-                    borderWidth: 2,
-                    pointBackgroundColor: '#667eea',
-                    pointBorderColor: '#fff',
-                    pointBorderWidth: 2
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        display: false
-                    }
-                },
-                scales: {
-                    r: {
-                        beginAtZero: true,
-                        ticks: {
-                            callback: function(value) {
-                                return '$' + (value / 1000000).toFixed(1) + 'M';
-                            },
-                            color: '#ffffff'
-                        },
-                        grid: {
-                            color: '#4a5568'
-                        },
-                        pointLabels: {
-                            color: '#ffffff'
+                        position: 'bottom',
+                        labels: {
+                            padding: 15,
+                            usePointStyle: true,
+                            color: '#ffffff',
+                            font: { size: 10 }
                         }
                     }
                 }
@@ -549,20 +568,105 @@ class BudgetTool {
     }
 
     updateCharts() {
-        // Update expense chart
+        // Get current values
+        const totalIncome = parseFloat(this.totalIncomeElement.textContent.replace(/[$,]/g, '')) || 0;
         const totalFixed = parseFloat(this.totalFixedExpensesElement.textContent.replace(/[$,]/g, '')) || 0;
         const totalVariable = parseFloat(this.totalVariableExpensesElement.textContent.replace(/[$,]/g, '')) || 0;
         const totalSavings = parseFloat(this.totalSavingsElement.textContent.replace(/[$,]/g, '')) || 0;
-        const totalIncome = parseFloat(this.totalIncomeElement.textContent.replace(/[$,]/g, '')) || 0;
+        const netCashFlow = totalIncome - (totalFixed + totalVariable);
 
-        if (this.expenseChart) {
-            this.expenseChart.data.datasets[0].data = [totalFixed, totalVariable, totalSavings];
-            this.expenseChart.update();
+        // Update Cash Flow Chart
+        if (this.cashFlowChart) {
+            this.cashFlowChart.data.datasets[0].data = [totalIncome, totalFixed + totalVariable, totalSavings, netCashFlow];
+            this.cashFlowChart.update();
+            
+            // Update insight
+            const cashFlowInsight = document.getElementById('cashFlowInsight');
+            if (cashFlowInsight) {
+                if (netCashFlow > 0) {
+                    cashFlowInsight.textContent = `Positive cash flow of ${this.formatCurrency(netCashFlow)} enables savings`;
+                } else {
+                    cashFlowInsight.textContent = `Negative cash flow of ${this.formatCurrency(Math.abs(netCashFlow))} needs attention`;
+                }
+            }
         }
 
-        if (this.incomeExpenseChart) {
-            this.incomeExpenseChart.data.datasets[0].data = [totalIncome, totalFixed + totalVariable, totalSavings];
-            this.incomeExpenseChart.update();
+        // Update Expense Optimization Chart
+        if (this.expenseOptimizationChart) {
+            const mortgage = parseFloat(this.mortgagePaymentInput.value) || 0;
+            const groceries = parseFloat(this.groceriesInput.value) || 0;
+            const transportation = parseFloat(this.transportationInput.value) || 0;
+            const entertainment = parseFloat(this.entertainmentInput.value) || 0;
+            const healthcare = parseFloat(this.healthcareInput.value) || 0;
+            const other = totalVariable - (groceries + transportation + entertainment + healthcare);
+            
+            this.expenseOptimizationChart.data.datasets[0].data = [mortgage, groceries, transportation, entertainment, healthcare, other];
+            this.expenseOptimizationChart.update();
+            
+            // Update insight
+            const largestExpense = document.getElementById('largestExpense');
+            if (largestExpense) {
+                const expenses = [
+                    { name: 'Mortgage', value: mortgage },
+                    { name: 'Groceries', value: groceries },
+                    { name: 'Transportation', value: transportation },
+                    { name: 'Entertainment', value: entertainment },
+                    { name: 'Healthcare', value: healthcare },
+                    { name: 'Other', value: other }
+                ];
+                const largest = expenses.reduce((max, current) => current.value > max.value ? current : max);
+                largestExpense.textContent = largest.name;
+            }
+        }
+
+        // Update Portfolio Allocation Chart
+        if (this.portfolioAllocationChart) {
+            const fidelity401k = parseFloat(this.fidelity401kInput.value) || 0;
+            const goldmanIra = parseFloat(this.goldmanIraInput.value) || 0;
+            const goldmanBrokerage = parseFloat(this.goldmanBrokerageInput.value) || 0;
+            const schwabRoth = parseFloat(this.schwabRothInput.value) || 0;
+            const schwabBrokerage = parseFloat(this.schwabBrokerageInput.value) || 0;
+            const crypto = parseFloat(this.cryptoCoinbaseInput.value) || 0;
+            
+            this.portfolioAllocationChart.data.datasets[0].data = [fidelity401k, goldmanIra, goldmanBrokerage, schwabRoth, schwabBrokerage, crypto];
+            this.portfolioAllocationChart.update();
+            
+            // Update insight
+            const accountCount = document.getElementById('accountCount');
+            if (accountCount) {
+                const activeAccounts = [fidelity401k, goldmanIra, goldmanBrokerage, schwabRoth, schwabBrokerage, crypto]
+                    .filter(value => value > 0).length;
+                accountCount.textContent = activeAccounts;
+            }
+        }
+
+        // Update FI Timeline Chart
+        if (this.fiTimelineChart) {
+            const currentPortfolio = parseFloat(this.investmentsElement.textContent.replace(/[$,]/g, '')) || 0;
+            const fiTarget = parseFloat(document.getElementById('fiTarget').textContent.replace(/[$,]/g, '')) || 0;
+            
+            // Project portfolio growth (assuming 8% annual return)
+            const projection = [];
+            for (let i = 0; i <= 5; i++) {
+                projection.push(currentPortfolio * Math.pow(1.08, i));
+            }
+            
+            this.fiTimelineChart.data.datasets[0].data = projection;
+            this.fiTimelineChart.data.datasets[1].data = Array(6).fill(fiTarget);
+            this.fiTimelineChart.update();
+            
+            // Update insight
+            const yearsToFI = document.getElementById('yearsToFI');
+            if (yearsToFI) {
+                let years = 0;
+                for (let i = 0; i < projection.length; i++) {
+                    if (projection[i] >= fiTarget) {
+                        years = i;
+                        break;
+                    }
+                }
+                yearsToFI.textContent = years;
+            }
         }
     }
 
