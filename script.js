@@ -206,7 +206,7 @@ class BudgetTool {
     }
 
     updateCareerTransitionPlanning() {
-        // Get current values
+        // Get current values directly from inputs for accuracy
         const totalExpenses = parseFloat(this.summaryExpensesElement.textContent.replace(/[$,]/g, '')) || 0;
         const totalIncome = parseFloat(this.totalIncomeElement.textContent.replace(/[$,]/g, '')) || 0;
         const currentPortfolio = parseFloat(this.investmentsElement.textContent.replace(/[$,]/g, '')) || 0;
@@ -221,6 +221,13 @@ class BudgetTool {
         const portfolioMonthlyIncome = (currentPortfolio * 0.04) / 12;
         const incomeGap = totalIncome - portfolioMonthlyIncome;
         const portfolioCoverage = totalIncome > 0 ? (portfolioMonthlyIncome / totalIncome) * 100 : 0;
+        
+        // Debug logging for accuracy verification
+        console.log('Career Transition Planning:', {
+            totalExpenses, totalIncome, currentPortfolio, emergencyFund,
+            emergencyFund6Months, emergencyFund12Months, emergencyFundGap,
+            portfolioMonthlyIncome, incomeGap, portfolioCoverage
+        });
         
         // Update display elements
         const currentMonthlyExpenses = document.getElementById('currentMonthlyExpenses');
@@ -286,16 +293,27 @@ class BudgetTool {
         const retirement401kPercentage = parseFloat(this.retirement401kInput.value) || 0;
         const biWeeklyPaycheck = grossSalary / 26; // 26 pay periods per year - use gross for 401K calculation
         const retirement401k = (biWeeklyPaycheck * retirement401kPercentage) / 100; // Calculate as percentage of bi-weekly paycheck
+        // Convert bi-weekly to monthly: bi-weekly amount * 26 pay periods / 12 months
+        const retirement401kMonthly = retirement401k * 26 / 12;
         const iraContribution = parseFloat(this.iraContributionInput.value) || 0; // Back to dollar amount
         const emergencyFund = parseFloat(this.emergencyFundInput.value) || 0;
         const brokerageInvestment = parseFloat(this.brokerageInvestmentInput.value) || 0;
         
         // Calculate savings - just use the standard inputs for now
-        const totalSavings = retirement401k + iraContribution + emergencyFund + brokerageInvestment;
+        const totalSavings = retirement401kMonthly + iraContribution + emergencyFund + brokerageInvestment;
 
         // Calculate totals
         const totalExpenses = totalFixedExpenses + totalVariableExpenses;
         const netCashFlow = totalIncome - totalExpenses - totalSavings;
+        
+        // Debug logging for accuracy verification
+        console.log('Budget Calculation:', {
+            income: { netSalary, investmentIncome, otherIncome, commissions, totalIncome },
+            fixedExpenses: { mortgagePayment, propertyTax, homeInsurance, electricity, internet, cellPhone, vanParking, youtubePremium, siriusXm, totalFixedExpenses },
+            variableExpenses: { groceries, diningOut, transportation, entertainment, healthcare, creditCardPayments, totalVariableExpenses },
+            savings: { retirement401k, iraContribution, emergencyFund, brokerageInvestment, totalSavings },
+            totals: { totalExpenses, netCashFlow }
+        });
 
         // Update display with animation
         this.animateValueChange(this.totalIncomeElement, totalIncome);
